@@ -6,10 +6,10 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import Set, Sequence
 from dataclasses import dataclass
-from typing import TypeVar
+from typing import TypeVar, Generic
 from .errors import CollisionError
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __author__  = "Eric Niklas Wolf"
 __email__   = "eric_niklas.wolf@mailbox.tu-dresden.de"
 __all__ = (
@@ -21,20 +21,21 @@ __all__ = (
 )
 
 T = TypeVar("T")
+V = TypeVar("V")
 
 
-class Term(ABC):
+class Term(ABC, Generic[V]):
     """ABC for Lambda terms"""
 
     __slots__ = ("__weakref__",)
 
     @abstractmethod
-    def free_variables(self) -> Set[str]:
+    def free_variables(self) -> Set[V]:
         """return the free variables of this Term"""
         raise NotImplementedError()
 
     @abstractmethod
-    def bound_variables(self) -> Set[str]:
+    def bound_variables(self) -> Set[V]:
         """return the bound variables of this Term"""
         raise NotImplementedError()
 
@@ -44,12 +45,12 @@ class Term(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def replace(self, variable: str, value: Term) -> Term:
+    def replace(self, variable: V, value: Term[V]) -> Term[V]:
         """replace a free variable with a Term"""
         raise NotImplementedError()
 
     @abstractmethod
-    def rename(self: T, variable: str, new: str) -> T:
+    def rename(self: T, variable: V, new: V) -> T:
         """rename a variable, even if this would change the meaning of the Term"""
         raise NotImplementedError()
 
@@ -59,27 +60,27 @@ class Term(ABC):
 
 
 @dataclass(unsafe_hash=True, slots=True)
-class Variable(Term):
+class Variable(Term[V]):
     """Term consiting of a Variable"""
 
-    name: str
+    name: V
 
     @classmethod
-    def with_valid_name(cls, name: str) -> Variable:
+    def with_valid_name(cls, name: V) -> Variable[V]:
         """create an instance with a valid name or raise ValueError"""
-        for character in name:
+        for character in str(name):
             if character in "().λ" or character.isspace():
                 raise ValueError(f"invalid character: '{character}'")
         return cls(name)
 
     def __str__(self) -> str:
-        return self.name
+        return str(self.name)
 
-    def free_variables(self) -> Set[str]:
+    def free_variables(self) -> Set[V]:
         """return the free variables of this Term"""
         return {self.name}
 
-    def bound_variables(self) -> Set[str]:
+    def bound_variables(self) -> Set[V]:
         """return the bound variables of this Term"""
         return set()
 
@@ -87,13 +88,13 @@ class Variable(Term):
         """return if this Term is in beta-normal form"""
         return True
 
-    def replace(self, variable: str, value: Term) -> Term:
+    def replace(self, variable: V, value: Term[V]) -> Term[V]:
         """replace a free variable with a Term, may change the meaning of the value"""
         if variable == self.name:
             return value
         return self
 
-    def rename(self, variable: str, new: str) -> Variable:
+    def rename(self, variable: V, new: V) -> Variable[V]:
         """rename a variable, may change the meaning of the Term"""
         if variable == self.name:
             return Variable(new)
@@ -101,15 +102,15 @@ class Variable(Term):
 
 
 @dataclass(unsafe_hash=True, slots=True)
-class Abstraction(Term):
+class Abstraction(Term[V]):
     """Term consisting of a lambda abstraction"""
 
-    bound: str
+    bound: V
 
-    body: Term
+    body: Term[V]
 
     @classmethod
-    def curried(cls, variables: Sequence[str], body: Term) -> Abstraction:
+    def curried(cls, variables: Sequence[V], body: Term[V]) -> Abstraction[V]:
         """create an Abstraction binding multiple variables"""
         match variables:
             case [*variables, inner]:
@@ -123,11 +124,11 @@ class Abstraction(Term):
     def __str__(self) -> str:
         return f"(λ{self.bound}.{self.body})"
 
-    def free_variables(self) -> Set[str]:
+    def free_variables(self) -> Set[V]:
         """return the free variables of this Term"""
         return self.body.free_variables() - {self.bound}
 
-    def bound_variables(self) -> Set[str]:
+    def bound_variables(self) -> Set[V]:
         """return the bound variables of this Term"""
         return self.body.bound_variables() | {self.bound}
 
@@ -135,19 +136,19 @@ class Abstraction(Term):
         """return if this Term is in beta-normal form"""
         return self.body.is_beta_normal_form()
 
-    def replace(self, variable: str, value: Term) -> Abstraction:
+    def replace(self, variable: V, value: Term[V]) -> Abstraction[V]:
         """replace a free variable with a Term"""
         if variable == self.bound:
             return self
         return Abstraction(self.bound, self.body.replace(variable, value))
 
-    def rename(self, variable: str, new: str) -> Abstraction:
+    def rename(self, variable: V, new: V) -> Abstraction[V]:
         """rename a variable, even if this would change the meaning of the Term"""
         if new == self.bound:
             return Abstraction(new, self.body.rename(variable, new))
         return Abstraction(self.bound, self.body.rename(variable, new))
 
-    def alpha_conversion(self, new: str) -> Abstraction:
+    def alpha_conversion(self, new: V) -> Abstraction[V]:
         """rename the bound variable"""
         if new == self.bound:
             return self
@@ -158,7 +159,7 @@ class Abstraction(Term):
             )
         raise CollisionError("variable already exists in body", (new,))
 
-    def eta_conversion(self) -> Term:   # type: ignore[return]
+    def eta_conversion(self) -> Term[V]:   # type: ignore[return]
         """remove a useless abstraction"""
         match self.body:
             case Application(f, Variable(x)) if x == self.bound and x not in f.free_variables():
@@ -169,17 +170,16 @@ class Abstraction(Term):
                 raise ValueError("abstraction is not useless")
 
 
-
 @dataclass(unsafe_hash=True, slots=True)
-class Application(Term):
+class Application(Term[V]):
     """Term consisting of an application"""
 
-    abstraction: Term
+    abstraction: Term[V]
 
-    argument: Term
+    argument: Term[V]
 
     @classmethod
-    def with_arguments(cls, abstraction: Term, arguments: Sequence[Term]) -> Application:
+    def with_arguments(cls, abstraction: Term[V], arguments: Sequence[Term[V]]) -> Application[V]:
         """create an Application applying the abstraction to multiple arguments"""
         match arguments:
             case [first, *rest]:
@@ -193,11 +193,11 @@ class Application(Term):
     def __str__(self) -> str:
         return f"({self.abstraction} {self.argument})"
 
-    def free_variables(self) -> Set[str]:
+    def free_variables(self) -> Set[V]:
         """return the free variables of this Term"""
         return self.abstraction.free_variables() | self.argument.free_variables()
 
-    def bound_variables(self) -> Set[str]:
+    def bound_variables(self) -> Set[V]:
         """return the bound variables of this Term"""
         return self.abstraction.bound_variables() | self.argument.bound_variables()
 
@@ -207,21 +207,21 @@ class Application(Term):
             and self.abstraction.is_beta_normal_form() \
             and self.argument.is_beta_normal_form()
 
-    def replace(self, variable: str, value: Term) -> Application:
+    def replace(self, variable: V, value: Term[V]) -> Application[V]:
         """replace a free variable with a Term"""
         return Application(
             self.abstraction.replace(variable, value),
             self.argument.replace(variable, value)
         )
 
-    def rename(self, variable: str, new: str) -> Application:
+    def rename(self, variable: V, new: V) -> Application[V]:
         """rename a variable, even if this would change the meaning of the Term"""
         return Application(
             self.abstraction.rename(variable, new),
             self.argument.rename(variable, new)
         )
 
-    def beta_reduction(self) -> Term:
+    def beta_reduction(self) -> Term[V]:
         """remove an abstraction"""
         match self.abstraction:
             case Abstraction(bound, body):
