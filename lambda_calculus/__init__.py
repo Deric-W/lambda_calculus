@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from typing import TypeVar
 from .errors import CollisionError
 
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 __author__  = "Eric Niklas Wolf"
 __email__   = "eric_niklas.wolf@mailbox.tu-dresden.de"
 __all__ = (
@@ -157,6 +157,17 @@ class Abstraction(Term):
                 self.body.rename(self.bound, new)
             )
         raise CollisionError("variable already exists in body", (new,))
+
+    def eta_conversion(self) -> Term:   # type: ignore[return]
+        """remove a useless abstraction"""
+        match self.body:
+            case Application(f, Variable(x)) if x == self.bound and x not in f.free_variables():
+                return f
+            case _:
+                # mypy detects missing returns
+                # because of https://github.com/python/mypy/issues/12534
+                raise ValueError("abstraction is not useless")
+
 
 
 @dataclass(unsafe_hash=True, slots=True)
