@@ -4,7 +4,7 @@
 
 from .terms import Variable, Abstraction, Application
 
-__version__ = "0.3.0"
+__version__ = "1.0.0"
 __author__  = "Eric Niklas Wolf"
 __email__   = "eric_niklas.wolf@mailbox.tu-dresden.de"
 __all__ = (

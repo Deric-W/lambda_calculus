@@ -4,11 +4,11 @@
 
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from collections.abc import Set, Sequence
+from collections.abc import Sequence, Set
 from dataclasses import dataclass
-from typing import TypeVar, Generic
+from typing import Generic, TypeVar
 from . import visitors
-from .errors import CollisionError
+from .visitors import substitution
 
 __all__ = (
     "Term",
@@ -42,19 +42,13 @@ class Term(ABC, Generic[V]):
         raise NotImplementedError()
 
     @abstractmethod
-    def replace(self, variable: V, value: Term[V]) -> Term[V]:
-        """replace a free variable with a Term"""
-        raise NotImplementedError()
-
-    @abstractmethod
-    def rename(self: T, variable: V, new: V) -> T:
-        """rename a variable, even if this would change the meaning of the Term"""
-        raise NotImplementedError()
-
-    @abstractmethod
     def accept(self, visitor: visitors.Visitor[T, V]) -> T:
         """accept a visitor by calling his corresponding method"""
         raise NotImplementedError()
+
+    def substitute(self, variable: V, value: Term[V]) -> Term[V]:
+        """substitute a free variable with a Term, possibly raising a CollisionError"""
+        return self.accept(substitution.SubstitutingVisitor(variable, value))
 
     def is_combinator(self) -> bool:
         """return if this Term has no free variables"""
@@ -92,18 +86,6 @@ class Variable(Term[V]):
     def is_beta_normal_form(self) -> bool:
         """return if this Term is in beta-normal form"""
         return True
-
-    def replace(self, variable: V, value: Term[V]) -> Term[V]:
-        """replace a free variable with a Term, may change the meaning of the value"""
-        if variable == self.name:
-            return value
-        return self
-
-    def rename(self, variable: V, new: V) -> Variable[V]:
-        """rename a variable, may change the meaning of the Term"""
-        if variable == self.name:
-            return Variable(new)
-        return self
 
     def accept(self, visitor: visitors.Visitor[T, V]) -> T:
         """accept a visitor by calling his corresponding method"""
@@ -145,30 +127,16 @@ class Abstraction(Term[V]):
         """return if this Term is in beta-normal form"""
         return self.body.is_beta_normal_form()
 
-    def replace(self, variable: V, value: Term[V]) -> Abstraction[V]:
-        """replace a free variable with a Term"""
-        if variable == self.bound:
-            return self
-        return Abstraction(self.bound, self.body.replace(variable, value))
-
-    def rename(self, variable: V, new: V) -> Abstraction[V]:
-        """rename a variable, even if this would change the meaning of the Term"""
-        if new == self.bound:
-            return Abstraction(new, self.body.rename(variable, new))
-        return Abstraction(self.bound, self.body.rename(variable, new))
-
     def alpha_conversion(self, new: V) -> Abstraction[V]:
         """rename the bound variable"""
         if new == self.bound:
             return self
-        elif new not in self.body.bound_variables() and new not in self.body.free_variables():
-            return Abstraction(
-                new,
-                self.body.rename(self.bound, new)
-            )
-        raise CollisionError("variable already exists in body", (new,))
+        return Abstraction(
+            new,
+            self.body.substitute(self.bound, Variable(new))
+        )
 
-    def eta_conversion(self) -> Term[V]:   # type: ignore[return]
+    def eta_reduction(self) -> Term[V]:   # type: ignore[return]
         """remove a useless abstraction"""
         match self.body:
             case Application(f, Variable(x)) if x == self.bound and x not in f.free_variables():
@@ -220,28 +188,11 @@ class Application(Term[V]):
             and self.abstraction.is_beta_normal_form() \
             and self.argument.is_beta_normal_form()
 
-    def replace(self, variable: V, value: Term[V]) -> Application[V]:
-        """replace a free variable with a Term"""
-        return Application(
-            self.abstraction.replace(variable, value),
-            self.argument.replace(variable, value)
-        )
-
-    def rename(self, variable: V, new: V) -> Application[V]:
-        """rename a variable, even if this would change the meaning of the Term"""
-        return Application(
-            self.abstraction.rename(variable, new),
-            self.argument.rename(variable, new)
-        )
-
     def beta_reduction(self) -> Term[V]:
         """remove an abstraction"""
         match self.abstraction:
             case Abstraction(bound, body):
-                collisions = body.bound_variables() & self.argument.free_variables()
-                if collisions:
-                    raise CollisionError("free variables in argument are bound in abstraction", collisions)
-                return body.replace(bound, self.argument)
+                return body.substitute(bound, self.argument)
             case _:
                 raise ValueError("can not perform reduction without known Abstraction")
 
