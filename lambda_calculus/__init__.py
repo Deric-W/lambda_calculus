@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from typing import TypeVar, Generic
 from .errors import CollisionError
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 __author__  = "Eric Niklas Wolf"
 __email__   = "eric_niklas.wolf@mailbox.tu-dresden.de"
 __all__ = (
@@ -68,7 +68,10 @@ class Variable(Term[V]):
     @classmethod
     def with_valid_name(cls, name: V) -> Variable[V]:
         """create an instance with a valid name or raise ValueError"""
-        for character in str(name):
+        string = str(name)
+        if not string:
+            raise ValueError("empty string representation")
+        for character in string:
             if character in "().λ" or character.isspace():
                 raise ValueError(f"invalid character: '{character}'")
         return cls(name)
