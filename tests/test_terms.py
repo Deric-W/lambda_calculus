@@ -130,6 +130,17 @@ class AbstractionTest(TestCase):
         with self.assertRaises(ValueError):
             Abstraction(1, Application(Variable(1), Variable(1))).eta_reduction()
 
+    def test_replace(self) -> None:
+        """test partial attribute replacement"""
+        self.assertEqual(
+            Abstraction(1, Variable(1)).replace(bound=42),
+            Abstraction(42, Variable(1))
+        )
+        self.assertEqual(
+            Abstraction(1, Variable(1)).replace(body=Variable(42)),
+            Abstraction(1, Variable(42))
+        )
+
 
 class ApplicationTest(TestCase):
     """Tests for Term consisting of an application"""
@@ -189,3 +200,14 @@ class ApplicationTest(TestCase):
             Application(Variable(1), Variable(2)).beta_reduction()
         with self.assertRaises(CollisionError):
             Application(Abstraction(1, Abstraction(2, Variable(1))), Variable(2)).beta_reduction()
+
+    def test_replace(self) -> None:
+        """test partial attribute replacement"""
+        self.assertEqual(
+            Application(Variable(1), Variable(2)).replace(abstraction=Variable(42)),
+            Application(Variable(42), Variable(2))
+        )
+        self.assertEqual(
+            Application(Variable(1), Variable(2)).replace(argument=Variable(42)),
+            Application(Variable(1), Variable(42))
+        )

@@ -150,6 +150,13 @@ class Abstraction(Term[V]):
         """accept a visitor by calling his corresponding method"""
         return visitor.visit_abstraction(self)
 
+    def replace(self, *, bound: V | None = None, body: Term[V] | None = None) -> Abstraction[V]:
+        """return a copy with specific attributes replaced"""
+        return Abstraction(
+            self.bound if bound is None else bound,
+            self.body if body is None else body
+        )
+
 
 @dataclass(unsafe_hash=True, slots=True)
 class Application(Term[V]):
@@ -199,3 +206,10 @@ class Application(Term[V]):
     def accept(self, visitor: visitors.Visitor[T, V]) -> T:
         """accept a visitor by calling his corresponding method"""
         return visitor.visit_application(self)
+
+    def replace(self, *, abstraction: Term[V] | None = None, argument: Term[V] | None = None) -> Application[V]:
+        """return a copy with specific attributes replaced"""
+        return Application(
+            self.abstraction if abstraction is None else abstraction,
+            self.argument if argument is None else argument
+        )
