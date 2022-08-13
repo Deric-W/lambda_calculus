@@ -19,7 +19,7 @@ V = TypeVar("V")
 class SubstitutingVisitor(Visitor["terms.Term[V]", V]):
     """
     Visitor which replaces a free Variable with another term
-    May raise a CollisionError and can not be reused in this case
+    Raises a CollisionError if a free variable gets bound
     """
 
     variable: V
@@ -70,12 +70,14 @@ class SubstitutingVisitor(Visitor["terms.Term[V]", V]):
         if abstraction.bound == self.variable:
             return abstraction
         self.bind_variable(abstraction.bound)
-        substituted = terms.Abstraction(
-            abstraction.bound,
-            abstraction.body.accept(self)
-        )
-        self.unbind_variable(abstraction.bound)
-        return substituted
+        try:
+            return terms.Abstraction(
+                abstraction.bound,
+                abstraction.body.accept(self)
+            )
+        finally:
+            # allow reuse of this visitor, even on error
+            self.unbind_variable(abstraction.bound)
 
     def visit_application(self, application: terms.Application[V]) -> terms.Application[V]:
         """visit an Application term"""
