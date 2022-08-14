@@ -93,6 +93,10 @@ class AbstractionTest(TestCase):
     def test_alpha_conversion(self) -> None:
         """test alpha conversion"""
         self.assertEqual(
+            Abstraction(1, Variable(1)).alpha_conversion(1),
+            Abstraction(1, Variable(1))
+        )
+        self.assertEqual(
             Abstraction(1, Abstraction(1, Variable(1))).alpha_conversion(2),
             Abstraction(2, Abstraction(1, Variable(1)))
         )
@@ -116,6 +120,8 @@ class AbstractionTest(TestCase):
             Abstraction(1, Abstraction(2, Application(Variable(1), Variable(2)))).alpha_conversion(2)
         with self.assertRaises(CollisionError):
             Abstraction(1, Abstraction(2, Application(Abstraction(2, Variable(2)), Variable(1)))).alpha_conversion(2)
+        with self.assertRaises(CollisionError):
+            Abstraction(1, Variable(2)).alpha_conversion(2)
 
     def test_eta_reduction(self) -> None:
         """test eta reduction"""

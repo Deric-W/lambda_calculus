@@ -8,6 +8,7 @@ from collections.abc import Sequence, Set
 from dataclasses import dataclass
 from typing import Generic, TypeVar
 from . import visitors
+from .errors import CollisionError
 from .visitors import substitution
 
 __all__ = (
@@ -131,10 +132,12 @@ class Abstraction(Term[V]):
         """rename the bound variable"""
         if new == self.bound:
             return self
-        return Abstraction(
-            new,
-            self.body.substitute(self.bound, Variable(new))
-        )
+        elif new not in self.body.free_variables():
+            return Abstraction(
+                new,
+                self.body.substitute(self.bound, Variable(new))
+            )
+        raise CollisionError("new variable would bind free variable in body", (new,))
 
     def eta_reduction(self) -> Term[V]:   # type: ignore[return]
         """remove a useless abstraction"""
