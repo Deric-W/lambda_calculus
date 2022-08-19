@@ -5,17 +5,17 @@
 from unittest import TestCase
 from lambda_calculus.terms import Variable, Abstraction, Application
 from lambda_calculus.errors import CollisionError
-from lambda_calculus.visitors.substitution import SubstitutingVisitor
+from lambda_calculus.visitors import substitution
 
 
 class SubstitutingVisitorTest(TestCase):
     """Test for Visitor substituting a free variable"""
 
-    visitor: SubstitutingVisitor[int]
+    visitor: substitution.SubstitutingVisitor[int]
 
     def setUp(self) -> None:
         """create a visitor"""
-        self.visitor = SubstitutingVisitor(1, Variable(42))
+        self.visitor = substitution.SubstitutingVisitor(1, Variable(42))
 
     def test_location(self) -> None:
         """test if the right variables get substituted"""
@@ -62,3 +62,62 @@ class SubstitutingVisitorTest(TestCase):
         with self.assertRaises(CollisionError):
             Abstraction(42, Variable(1)).accept(self.visitor)
         self.assertEqual(self.visitor.bound_variables, {})
+
+
+class TestCountingSubstitutingVisitor(TestCase):
+    """Test for Visitor substituting a free variable without errors"""
+
+    visitor: substitution.CountingSubstitutingVisitor
+
+    def setUp(self) -> None:
+        """create a visitor"""
+        self.visitor = substitution.CountingSubstitutingVisitor("a", Variable("x"))
+
+    def test_location(self) -> None:
+        """test if the right variables get substituted"""
+        self.assertEqual(
+            Variable("b").accept(self.visitor),
+            Variable("b")
+        )
+        self.assertEqual(
+            Variable("a").accept(self.visitor),
+            Variable("x")
+        )
+        self.assertEqual(
+            Application(
+                Abstraction("a", Variable("a")),
+                Abstraction("b", Variable("a"))
+            ).accept(self.visitor),
+            Application(Abstraction("a", Variable("a")), Abstraction("b", Variable("x")))
+        )
+
+    def test_renaming(self) -> None:
+        """test if colliding bound variables get renamed"""
+        self.assertEqual(
+            Abstraction("x", Variable("a")).accept(self.visitor),
+            Abstraction("x1", Variable("x"))
+        )
+        self.assertEqual(
+            Abstraction("x", Abstraction("x1", Variable("a"))).accept(self.visitor),
+            Abstraction("x2", Abstraction("x1", Variable("x")))
+        )
+        self.assertEqual(
+            Abstraction("x", Application(Variable("a"), Variable("x1"))).accept(self.visitor),
+            Abstraction("x2", Application(Variable("x"), Variable("x1")))
+        )
+        self.assertEqual(
+            Abstraction(
+                "x",
+                Application(
+                    Abstraction("x", Variable("x")),
+                    Variable("a")
+                )
+            ).accept(self.visitor),
+            Abstraction(
+                "x1",
+                Application(
+                    Abstraction("x1", Variable("x1")),
+                    Variable("x")
+                )
+            )
+        )
