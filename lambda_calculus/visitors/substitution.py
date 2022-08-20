@@ -5,6 +5,7 @@
 from __future__ import annotations
 from abc import abstractmethod
 from collections.abc import Set
+from itertools import count, filterfalse
 from typing import TypeVar
 from .. import terms
 from ..errors import CollisionError
@@ -151,13 +152,15 @@ class CountingSubstitutingVisitor(RenamingSubstitutingVisitor[str]):
 
     def prevent_collision(self, abstraction: terms.Abstraction[str]) -> terms.Abstraction[str]:
         """prevent collisions by renaming bound variables"""
-        used_variables = abstraction.body.bound_variables() | abstraction.free_variables()
-        variable = abstraction.bound
-        number = 1
-        while variable in self.free_variables or variable in used_variables:
-            variable = abstraction.bound + str(number)
-            number += 1
-        return terms.Abstraction(
-            variable,
-            abstraction.body.substitute(abstraction.bound, terms.Variable(variable))
-        )
+        if abstraction.bound in self.free_variables:
+            used_variables = abstraction.body.bound_variables() \
+                | abstraction.free_variables() \
+                | self.free_variables
+            candidates = map(lambda i: f"{abstraction.bound}{i}", count(1))
+            variable = next(filterfalse(lambda v: v in used_variables, candidates))
+            return terms.Abstraction(
+                variable,
+                abstraction.body.substitute(abstraction.bound, terms.Variable(variable))
+            )
+        else:
+            return abstraction
