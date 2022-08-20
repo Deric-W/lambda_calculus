@@ -10,7 +10,8 @@ from .. import terms
 __all__ = (
     "Visitor",
     "BottomUpVisitor",
-    "substitution"
+    "substitution",
+    "walking"
 )
 
 T = TypeVar("T")

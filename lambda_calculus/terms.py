@@ -3,13 +3,13 @@
 """Lambda Term implementations"""
 
 from __future__ import annotations
-from abc import ABC, abstractmethod
-from collections.abc import Sequence, Set
+from abc import abstractmethod
+from collections.abc import Sequence, Set, Iterable, Iterator
 from dataclasses import dataclass
-from typing import Generic, TypeVar
+from typing import TypeVar
 from . import visitors
 from .errors import CollisionError
-from .visitors import substitution
+from .visitors import substitution, walking
 
 __all__ = (
     "Term",
@@ -22,10 +22,13 @@ T = TypeVar("T")
 V = TypeVar("V")
 
 
-class Term(ABC, Generic[V]):
+class Term(Iterable["Term[V]"]):
     """ABC for Lambda terms"""
 
     __slots__ = ("__weakref__",)
+
+    def __iter__(self) -> Iterator[Term[V]]:
+        return self.accept(walking.DepthFirstVisitor())
 
     @abstractmethod
     def free_variables(self) -> Set[V]:
