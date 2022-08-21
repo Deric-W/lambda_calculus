@@ -11,6 +11,7 @@ __all__ = (
     "Visitor",
     "BottomUpVisitor",
     "substitution",
+    "normalisation",
     "walking"
 )
 
