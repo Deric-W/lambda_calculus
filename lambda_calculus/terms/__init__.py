@@ -1,15 +1,15 @@
 #!/usr/bin/python3
 
-"""Lambda Term implementations"""
+"""Lambda Terms"""
 
 from __future__ import annotations
 from abc import abstractmethod
 from collections.abc import Sequence, Set, Iterable, Iterator
 from dataclasses import dataclass
 from typing import TypeVar
-from . import visitors
-from .errors import CollisionError
-from .visitors import substitution, walking
+from .. import visitors
+from ..errors import CollisionError
+from ..visitors import substitution, walking
 
 __all__ = (
     "Term",

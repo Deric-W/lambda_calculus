@@ -1,6 +1,6 @@
 [project]
 name = "lambda_calculus"
-version = "1.7.0"
+version = "1.7.1"
 description = "Implementation of the Lambda calculus"
 requires-python = ">=3.10"
 keywords = []
