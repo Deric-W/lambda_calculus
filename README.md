@@ -5,7 +5,8 @@ The `lambda_calculus` package contains classes which implement basic operations 
 To use it, simply import the classes `Variable`, `Abstraction` and `Application` from this package
 and nest them to create more complex lambda terms.
 
-You can also use the `visitors` subpackage to define your own operations on terms.
+You can also use the `visitors` subpackage to define your own operations on terms or
+use predefined ones from the `terms` subpackage.
 
 ## Requirements
 
