@@ -195,9 +195,13 @@ class Application(Term[V]):
         """return the bound variables of this Term"""
         return self.abstraction.bound_variables() | self.argument.bound_variables()
 
+    def is_redex(self) -> bool:
+        """return if this term can be reduced"""
+        return isinstance(self.abstraction, Abstraction)
+
     def is_beta_normal_form(self) -> bool:
         """return if this Term is in beta-normal form"""
-        return not isinstance(self.abstraction, Abstraction) \
+        return not self.is_redex() \
             and self.abstraction.is_beta_normal_form() \
             and self.argument.is_beta_normal_form()
 
