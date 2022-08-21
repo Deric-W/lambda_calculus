@@ -24,6 +24,13 @@ class BetaNormalisingVisitor(Visitor[Iterator[terms.Term[str]], str]):
 
     __slots__ = ()
 
+    def skip_intermediate(self, term: terms.Term[str]) -> terms.Term[str]:
+        """return the beta normal form directly"""
+        result = term
+        for intermediate in term.accept(self):
+            result = intermediate
+        return result
+
     def visit_variable(self, variable: terms.Variable[str]) -> Iterator[terms.Variable[str]]:
         """visit a Variable term"""
         return iter(())

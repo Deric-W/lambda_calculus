@@ -119,3 +119,16 @@ class TestBetaNormalisingVisitor(TestCase):
             if iteration > 10:
                 break
             self.assertEqual(transformation, term)
+
+    def test_skip_intermediate(self) -> None:
+        """test skipping of intermediate results"""
+        self.assertEqual(
+            self.visitor.skip_intermediate(Abstraction("a", Variable("z"))),
+            Abstraction("a", Variable("z"))
+        )
+        self.assertEqual(
+            self.visitor.skip_intermediate(
+                Application(Abstraction("a", Variable("a")), Variable("z"))
+            ),
+            Variable("z")
+        )
