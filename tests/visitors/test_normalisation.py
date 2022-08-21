@@ -63,7 +63,10 @@ class TestBetaNormalisingVisitor(TestCase):
         self.assertEqual(
             list(
                 Application(
-                    Abstraction("x", Variable("z")),
+                    Application(
+                        Abstraction("a", Variable("a")),
+                        Abstraction("x", Variable("z"))
+                    ),
                     Application(
                         triple,
                         triple
@@ -71,6 +74,13 @@ class TestBetaNormalisingVisitor(TestCase):
                 ).accept(self.visitor)
             ),
             [
+                Application(
+                    Abstraction("x", Variable("z")),
+                    Application(
+                        triple,
+                        triple
+                    )
+                ),
                 Variable("z")
             ]
         )

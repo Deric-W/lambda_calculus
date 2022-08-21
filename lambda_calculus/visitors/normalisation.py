@@ -19,8 +19,10 @@ V = TypeVar("V")
 class BetaNormalisingVisitor(Visitor[Iterator[terms.Term[str]], str]):
     """
     Visitor which transforms a term into its beta normal form,
-    yielding intermediate results
+    yielding intermediate results until it is reached
     """
+
+    __slots__ = ()
 
     def visit_variable(self, variable: terms.Variable[str]) -> Iterator[terms.Variable[str]]:
         """visit a Variable term"""
@@ -51,6 +53,7 @@ class BetaNormalisingVisitor(Visitor[Iterator[terms.Term[str]], str]):
                             )
                             yield reduced
                             yield from reduced.accept(self)
+                            return
                         case _:
                             abstraction = transformation
                 # no redex, continue with argument
