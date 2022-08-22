@@ -1,5 +1,8 @@
 # lambda_calculus
 
+![Tests](https://github.com/Deric-W/lambda_calculus/actions/workflows/Tests.yaml/badge.svg)
+[![codecov](https://codecov.io/gh/Deric-W/lambda_calculus/branch/main/graph/badge.svg?token=SU3982mC17)](https://codecov.io/gh/Deric-W/lambda_calculus)
+
 The `lambda_calculus` package contains classes which implement basic operations of the lambda calculus.
 
 To use it, simply import the classes `Variable`, `Abstraction` and `Application` from this package
