@@ -26,8 +26,8 @@ name = "Eric Niklas Wolf"
 email = "eric_niklas.wolf@mailbox.tu-dresden.de"
 
 [project.urls]
-Repository = "https://github.com/Deric-W/study_utils/tree/main/Programming/lambda_calculus"
-Bugtracker = "https://github.com/Deric-W/study_utils/issues"
+Repository = "https://github.com/Deric-W/lambda_calculus"
+Bugtracker = "https://github.com/Deric-W/lambda_calculus/issues"
 
 [build-system]
 requires = ["setuptools >= 61.0.0"]
