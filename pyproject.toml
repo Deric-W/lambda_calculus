@@ -1,6 +1,6 @@
 [project]
 name = "lambda_calculus"
-version = "1.10.1"
+version = "1.10.2"
 description = "Implementation of the Lambda calculus"
 requires-python = ">=3.10"
 keywords = []
@@ -17,9 +17,6 @@ classifiers = [
 [project.readme]
 file = "README.md"
 content-type = "text/markdown"
-
-[project.license]
-text = "GNU General Public License v3 (GPLv3)"
 
 [[project.authors]]
 name = "Eric Niklas Wolf"
