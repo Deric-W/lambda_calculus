@@ -15,6 +15,12 @@ use predefined ones from the `terms` subpackage.
 
 Python >= 3.10 is required to use this package.
 
+## Installation
+
+```sh
+python3 -m pip install lambda-calculus
+```
+
 ## Examples
 
 (λy.(λx.(λy. + x y)) y 3) 4
