@@ -21,7 +21,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Install test dependencies
-      run: python -m pip install --no-cache-dir --quiet mypy coverage build
+      run: python -m pip install --no-cache-dir mypy coverage build
 
     - name: Run MyPy
       run: python -m mypy --cache-dir=/dev/null -p lambda_calculus
@@ -39,3 +39,11 @@ jobs:
       uses: codecov/codecov-action@v3
       with:
         flags: ${{ runner.os }}
+        verbose: true
+
+    - name: Publish package
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        password: ${{ secrets.PYPI_API_TOKEN }}
+        verbose: true
