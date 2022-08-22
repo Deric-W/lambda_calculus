@@ -17,7 +17,8 @@ __all__ = (
     "Abstraction",
     "Application",
     "arithmetic",
-    "logic"
+    "logic",
+    "pairs"
 )
 
 T = TypeVar("T")
