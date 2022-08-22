@@ -43,3 +43,15 @@ term = Application.with_arguments(term, (y, Variable.with_valid_name("3")))
 term = Abstraction("y", term)
 term = Application(term, Variable.with_valid_name("4"))
 ```
+
+evaluation:
+
+```python
+from lambda_calculus import Variable, Application
+from lambda_calculus.visitors.normalisation import BetaNormalisingVisitor
+
+assert BetaNormalisingVisitor().skip_intermediate(term) == Application.with_arguments(
+    Variable("+"),
+    (Variable("4"), Variable("3"))
+)
+```
