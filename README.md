@@ -25,6 +25,8 @@ python3 -m pip install lambda-calculus
 
 (λy.(λx.(λy. + x y)) y 3) 4
 
+### Nesting
+
 ```python
 from lambda_calculus import Variable, Abstraction, Application
 
@@ -38,7 +40,7 @@ term = Abstraction("y", term)
 term = Application(term, Variable("4"))
 ```
 
-using utility methods:
+### Utility Methods
 
 ```python
 from lambda_calculus import Variable, Abstraction, Application
@@ -53,7 +55,23 @@ term = Abstraction("y", term)
 term = Application(term, Variable.with_valid_name("4"))
 ```
 
-evaluation:
+### Method Chaining
+
+```python
+from lambda_calculus import Variable, Abstraction, Application
+
+x = Variable.with_valid_name("x")
+y = Variable.with_valid_name("y")
+
+term = Variable("+") \
+    .apply_to(x, y) \
+    .abstract("x", "y") \
+    .apply_to(y, Variable("3")) \
+    .abstract("y") \
+    .apply_to(Variable("4"))
+```
+
+### Evaluation
 
 ```python
 from lambda_calculus import Variable, Application

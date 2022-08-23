@@ -53,6 +53,14 @@ class Term(Iterable["Term[V]"]):
         """accept a visitor by calling his corresponding method"""
         raise NotImplementedError()
 
+    def abstract(self, *variables: V) -> Abstraction[V]:
+        """create an Abstraction binding multiple variables"""
+        return Abstraction.curried(variables, self)
+
+    def apply_to(self, *arguments: Term[V]) -> Application[V]:
+        """create an Application applying self to multiple arguments"""
+        return Application.with_arguments(self, arguments)
+
     def substitute(self, variable: V, value: Term[V]) -> Term[V]:
         """substitute a free variable with a Term, possibly raising a CollisionError"""
         return self.accept(substitution.SubstitutingVisitor(variable, value))
@@ -64,7 +72,7 @@ class Term(Iterable["Term[V]"]):
 
 @dataclass(unsafe_hash=True, slots=True)
 class Variable(Term[V]):
-    """Term consiting of a Variable"""
+    """Term consisting of a Variable"""
 
     name: V
 
