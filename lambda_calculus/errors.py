@@ -28,8 +28,11 @@ class CollisionError(ValueError, Generic[V]):
         self.collisions = collisions
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.message!r}, {self.collisions!r})"
+        return (
+            f"{self.__class__.__module__}.{self.__class__.__qualname__}"
+            f"({self.message!r}, {self.collisions!r})"
+        )
 
     def __str__(self) -> str:
         collisions = ", ".join(map(str, self.collisions))
-        return f"[collisions: {collisions}] {self.message}"
+        return f"[collisions: {collisions or 'none'}] {self.message}"
