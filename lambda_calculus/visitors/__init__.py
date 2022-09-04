@@ -4,12 +4,13 @@
 
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import TypeVar, Generic
+from typing import TypeVar, Generic, final
 from .. import terms
 
 __all__ = (
     "Visitor",
     "BottomUpVisitor",
+    "DeferrableVisitor",
     "substitution",
     "normalisation",
     "walking"
@@ -27,6 +28,7 @@ class Visitor(ABC, Generic[T, V]):
 
     __slots__ = ()
 
+    @final
     def visit(self, term: terms.Term[V]) -> T:
         """visit a term"""
         return term.accept(self)
@@ -34,7 +36,7 @@ class Visitor(ABC, Generic[T, V]):
     @abstractmethod
     def visit_variable(self, variable: terms.Variable[V]) -> T:
         """visit a Variable term"""
-        raise NotADirectoryError()
+        raise NotImplementedError()
 
     @abstractmethod
     def visit_abstraction(self, abstraction: terms.Abstraction[V]) -> T:
@@ -52,6 +54,7 @@ class BottomUpVisitor(Visitor[T, V]):
 
     __slots__ = ()
 
+    @final
     def visit_abstraction(self, abstraction: terms.Abstraction[V]) -> T:
         """visit an Abstraction term"""
         return self.ascend_abstraction(
@@ -59,6 +62,7 @@ class BottomUpVisitor(Visitor[T, V]):
             abstraction.body.accept(self)
         )
 
+    @final
     def visit_application(self, application: terms.Application[V]) -> T:
         """visit an Application term"""
         return self.ascend_application(
@@ -75,4 +79,20 @@ class BottomUpVisitor(Visitor[T, V]):
     @abstractmethod
     def ascend_application(self, application: terms.Application[V], abstraction: T, argument: T) -> T:
         """visit an Application term after visiting its abstraction and argument"""
+        raise NotImplementedError()
+
+
+class DeferrableVisitor(Visitor[T, V]):
+    """ABC for visitors which can visit terms top down lazyly"""
+
+    __slots__ = ()
+
+    @abstractmethod
+    def defer_abstraction(self, abstraction: terms.Abstraction[V]) -> tuple[T, DeferrableVisitor[T, V] | None]:
+        """visit an Abstraction term and return the visitor used to visit its body"""
+        raise NotImplementedError()
+
+    @abstractmethod
+    def defer_application(self, application: terms.Application[V]) -> tuple[T, DeferrableVisitor[T, V] | None, DeferrableVisitor[T, V] | None]:
+        """visit an Application term and return the visitors used to visit its abstraction and argument"""
         raise NotImplementedError()

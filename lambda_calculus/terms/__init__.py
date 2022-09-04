@@ -9,7 +9,8 @@ from dataclasses import dataclass
 from typing import TypeVar
 from .. import visitors
 from ..errors import CollisionError
-from ..visitors import substitution, walking
+from ..visitors import walking
+from ..visitors.substitution import checked
 
 __all__ = (
     "Term",
@@ -63,7 +64,7 @@ class Term(Iterable["Term[V]"]):
 
     def substitute(self, variable: V, value: Term[V]) -> Term[V]:
         """substitute a free variable with a Term, possibly raising a CollisionError"""
-        return self.accept(substitution.SubstitutingVisitor(variable, value))
+        return self.accept(checked.CheckedSubstitution.from_substitution(variable, value))
 
     def is_combinator(self) -> bool:
         """return if this Term has no free variables"""

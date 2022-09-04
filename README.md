@@ -11,6 +11,18 @@ and nest them to create more complex lambda terms.
 You can also use the `visitors` subpackage to define your own operations on terms or
 use predefined ones from the `terms` subpackage.
 
+## Notice
+
+This package is intended to be used for educational purposes and is not optimized for speed.
+
+Furthermore, it expects all terms to be finite, which means the absense of cycles.
+
+This results in the Visitor for term normalisation included in this package (`BetaNormalisingVisitor`)
+having problems when handling terms which are passed a reference to themselves during evaluation,
+which is the case for all recursive functions.
+
+`RecursionError` may be raised if the visitors get passed an infinite term.
+
 ## Requirements
 
 Python >= 3.10 is required to use this package.
