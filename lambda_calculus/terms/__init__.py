@@ -19,7 +19,8 @@ __all__ = (
     "Application",
     "arithmetic",
     "logic",
-    "pairs"
+    "pairs",
+    "combinators"
 )
 
 T = TypeVar("T")
