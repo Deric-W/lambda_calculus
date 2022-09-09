@@ -4,7 +4,7 @@
 
 from unittest import TestCase
 from lambda_calculus.visitors.normalisation import BetaNormalisingVisitor
-from lambda_calculus.terms import Application, arithmetic
+from lambda_calculus.terms import Application, arithmetic, logic
 
 
 class OrderingTest(TestCase):
@@ -15,6 +15,21 @@ class OrderingTest(TestCase):
     def setUp(self) -> None:
         """create a visitor"""
         self.visitor = BetaNormalisingVisitor()
+
+    def test_iszero(self) -> None:
+        """test iszero term"""
+        self.assertEqual(
+            self.visitor.skip_intermediate(
+                arithmetic.ISZERO.apply_to(arithmetic.number(0))
+            ),
+            logic.TRUE
+        )
+        self.assertEqual(
+            self.visitor.skip_intermediate(
+                arithmetic.ISZERO.apply_to(arithmetic.number(1))
+            ),
+            logic.FALSE
+        )
 
     def test_successor(self) -> None:
         """test successor term"""

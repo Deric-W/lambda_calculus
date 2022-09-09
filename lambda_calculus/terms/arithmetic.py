@@ -3,8 +3,10 @@
 """Implementations of natural numbers and arithmetic operators"""
 
 from . import Term, Variable, Abstraction, Application
+from .logic import TRUE, FALSE
 
 __all__ = (
+    "ISZERO",
     "SUCCESSOR",
     "PREDECESSOR",
     "ADD",
@@ -13,6 +15,8 @@ __all__ = (
     "POWER",
     "number"
 )
+
+ISZERO = Variable("n").apply_to(FALSE.abstract("x"), TRUE).abstract("n")
 
 SUCCESSOR = Abstraction.curried(
     ("n", "f", "x"),
