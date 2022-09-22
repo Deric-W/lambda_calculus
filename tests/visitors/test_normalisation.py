@@ -145,3 +145,14 @@ class TestBetaNormalisingVisitor(TestCase):
             ),
             Variable("z")
         )
+
+    def test_self_argument(self) -> None:
+        """test behavior when applying a term to itself"""
+        term = Variable("a").apply_to(Variable("b")).abstract("a")
+        term_copy = Variable("a").apply_to(Variable("b")).abstract("a")
+        self.assertEqual(
+            self.visitor.skip_intermediate(term.apply_to(term)),
+            Variable("b").apply_to(Variable("b"))
+        )
+        # prevent original for being modified
+        self.assertEqual(term, term_copy)

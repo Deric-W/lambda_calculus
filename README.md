@@ -15,13 +15,9 @@ use predefined ones from the `terms` subpackage.
 
 This package is intended to be used for educational purposes and is not optimized for speed.
 
-Furthermore, it expects all terms to be finite, which means the absense of cycles.
+Furthermore, it expects all terms to be finite, which means the absence of cycles.
 
-This results in the Visitor for term normalisation included in this package (`BetaNormalisingVisitor`)
-having problems when handling terms which are passed a reference to themselves during evaluation,
-which is the case for all recursive functions.
-
-`RecursionError` may be raised if the visitors get passed an infinite term.
+`RecursionError` may be raised if the visitors get passed an infinite term or the evaluation is too complex.
 
 ## Requirements
 
