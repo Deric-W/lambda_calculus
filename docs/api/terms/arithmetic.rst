@@ -1,4 +1,4 @@
-Module airthmetic
+Module arithmetic
 =================
 
 .. toctree::

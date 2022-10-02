@@ -17,6 +17,9 @@ __all__ = (
 )
 
 ISZERO = Variable("n").apply_to(FALSE.abstract("x"), TRUE).abstract("n")
+"""
+Term which evaluates to logic.TRUE if its argument is zero, logic.FALSE otherwise
+"""
 
 SUCCESSOR = Abstraction.curried(
     ("n", "f", "x"),
@@ -28,6 +31,9 @@ SUCCESSOR = Abstraction.curried(
         )
     )
 )
+"""
+Term evaluating to its argument incremented by one.
+"""
 
 PREDECESSOR = Abstraction.curried(
     ("n", "f", "x"),
@@ -49,6 +55,9 @@ PREDECESSOR = Abstraction.curried(
         )
     )
 )
+"""
+Term ealuating to its argument decremented by one.
+"""
 
 ADD = Abstraction.curried(
     ("m", "n", "f", "x"),
@@ -63,6 +72,9 @@ ADD = Abstraction.curried(
         )
     )
 )
+"""
+Term evaluating to the sum of its two arguments.
+"""
 
 SUBTRACT = Abstraction.curried(
     ("m", "n"),
@@ -71,6 +83,9 @@ SUBTRACT = Abstraction.curried(
         (PREDECESSOR, Variable("m"))
     )
 )
+"""
+Term evaluating to the difference of its two arguments.
+"""
 
 MULTIPLY = Abstraction.curried(
     ("m", "n", "f"),
@@ -82,6 +97,9 @@ MULTIPLY = Abstraction.curried(
         )
     )
 )
+"""
+Term evaluating to the product of its two arguments.
+"""
 
 POWER = Abstraction.curried(
     ("b", "e"),
@@ -90,10 +108,19 @@ POWER = Abstraction.curried(
         Variable("b")
     )
 )
+"""
+Term evaluating to its first argument to the power of its second argument.
+"""
 
 
 def number(n: int) -> Abstraction[str]:
-    """return n encoded in lambda terms"""
+    """
+    Encode a number as a lambda term.
+
+    :param n: number to encode
+    :raise ValueError: If the number is negative
+    :return: requested term
+    """
     if n < 0:
         raise ValueError("number is not natural")
     f = Variable("f")
