@@ -43,3 +43,14 @@ warn_redundant_casts = true
 warn_unused_ignores = true
 warn_return_any = true
 warn_unreachable = true
+
+[tool.sphinx-pyproject]
+html_theme = "alabaster"
+extensions = [
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.autodoc"
+]
+
+[tool.sphinx-pyproject.autodoc_default_options]
+show-inheritance = true
+member-order = "bysource"
