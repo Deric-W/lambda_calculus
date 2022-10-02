@@ -45,11 +45,14 @@ warn_return_any = true
 warn_unreachable = true
 
 [tool.sphinx-pyproject]
-html_theme = "alabaster"
+project = "lambda_calculus"
+html_theme = "sphinx_rtd_theme"
 extensions = [
     "sphinx.ext.intersphinx",
-    "sphinx.ext.autodoc"
+    "sphinx.ext.autodoc",
+    "sphinx.ext.viewcode"
 ]
+autodoc_typehints_format = "short"
 
 [tool.sphinx-pyproject.autodoc_default_options]
 show-inheritance = true

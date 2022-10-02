@@ -1,11 +1,11 @@
-lambda_calculus.visitors
-========================
+Package visitors
+================
 
 .. toctree::
    :maxdepth: 2
 
-   substitution<visitors/substitution>
-   visitors<visitors/walking>
+   visitors/substitution
+   visitors/walking
 
 .. automodule:: lambda_calculus.visitors
     :members:

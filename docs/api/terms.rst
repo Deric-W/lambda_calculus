@@ -1,13 +1,13 @@
-lambda_calculus.terms
-=====================
+Package terms
+=============
 
 .. toctree::
    :maxdepth: 2
 
-   logic<terms/logic>
-   arithmetic<terms/arithmetic>
-   pairs<terms/pairs>
-   combinators<terms/combinators>
+   terms/logic
+   terms/arithmetic
+   terms/pairs
+   terms/combinators
 
 .. automodule:: lambda_calculus.terms
     :members:

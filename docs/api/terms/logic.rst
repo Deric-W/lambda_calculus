@@ -1,5 +1,5 @@
-lambda_calculus.terms.logic
-===========================
+Module logic
+============
 
 .. toctree::
    :maxdepth: 2

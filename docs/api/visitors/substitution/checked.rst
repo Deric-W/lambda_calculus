@@ -1,5 +1,5 @@
-lambda_calculus.visitors.substitution.checked
-=============================================
+Module checked
+==============
 
 .. toctree::
    :maxdepth: 2

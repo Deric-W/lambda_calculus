@@ -1,5 +1,5 @@
-lambda_calculus.terms.combinators
-=================================
+Module combinators
+==================
 
 .. toctree::
    :maxdepth: 2

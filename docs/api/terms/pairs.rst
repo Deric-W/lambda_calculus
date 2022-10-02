@@ -1,5 +1,5 @@
-lambda_calculus.terms.pairs
-===========================
+Module pairs
+============
 
 .. toctree::
    :maxdepth: 2

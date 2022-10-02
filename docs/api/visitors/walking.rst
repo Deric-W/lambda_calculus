@@ -1,5 +1,5 @@
-lambda_calculus.visitors.walking
-================================
+Module walking
+==============
 
 .. toctree::
    :maxdepth: 2

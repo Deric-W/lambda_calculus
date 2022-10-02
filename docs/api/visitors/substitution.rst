@@ -1,12 +1,12 @@
-lambda_calculus.visitors.substitution
-=====================================
+Package substitution
+====================
 
 .. toctree::
    :maxdepth: 2
 
-   checked<substitution/checked>
-   renaming<substitution/renaming>
-   unsafe<substitution/unsafe>
+   substitution/checked
+   substitution/renaming
+   substitution/unsafe
 
 .. automodule:: lambda_calculus.visitors.substitution
     :members:

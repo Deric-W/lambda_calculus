@@ -1,5 +1,5 @@
-lambda_calculus.visitors.substitution.renaming
-==============================================
+Module renaming
+===============
 
 .. toctree::
    :maxdepth: 2

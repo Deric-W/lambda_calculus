@@ -1,5 +1,5 @@
-lambda_calculus.terms.arithmetic
-================================
+Module airthmetic
+=================
 
 .. toctree::
    :maxdepth: 2

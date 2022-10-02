@@ -1,5 +1,5 @@
-lambda_calculus.visitors.substitution.unsafe
-============================================
+Module unsafe
+=============
 
 .. toctree::
    :maxdepth: 2

@@ -1,5 +1,5 @@
-lambda_calculus.errors
-======================
+Module errors
+=============
 
 .. toctree::
    :maxdepth: 2

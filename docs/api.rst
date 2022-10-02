@@ -4,9 +4,9 @@ Package API
 .. toctree::
    :maxdepth: 2
 
-   terms<api/terms>
-   visitors<api/visitors>
-   errors<api/errors>
+   api/terms
+   api/visitors
+   api/errors
 
 .. automodule:: lambda_calculus
 
