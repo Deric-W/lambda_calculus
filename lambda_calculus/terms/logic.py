@@ -2,6 +2,7 @@
 
 """Implementations of boolean values and logical operators"""
 
+from typing import Final
 from . import Variable, Abstraction, Application
 
 __all__ = (
@@ -13,17 +14,17 @@ __all__ = (
     "IF_THEN_ELSE"
 )
 
-TRUE = Abstraction.curried(("x", "y"), Variable("x"))
+TRUE: Final = Abstraction.curried(("x", "y"), Variable("x"))
 """
 Term representing True.
 """
 
-FALSE = Abstraction.curried(("x", "y"), Variable("y"))
+FALSE: Final = Abstraction.curried(("x", "y"), Variable("y"))
 """
 Term representing False
 """
 
-AND = Abstraction.curried(
+AND: Final = Abstraction.curried(
     ("p", "q"),
     Application.with_arguments(Variable("p"), (Variable("q"), Variable("p")))
 )
@@ -31,7 +32,7 @@ AND = Abstraction.curried(
 Term implementing logical conjunction between its two arguments.
 """
 
-OR = Abstraction.curried(
+OR: Final = Abstraction.curried(
     ("p", "q"),
     Application.with_arguments(Variable("p"), (Variable("p"), Variable("q")))
 )
@@ -39,12 +40,12 @@ OR = Abstraction.curried(
 Term implementing logical disjunction between its two arguments.
 """
 
-NOT = Abstraction("p", Application.with_arguments(Variable("p"), (FALSE, TRUE)))
+NOT: Final = Abstraction("p", Application.with_arguments(Variable("p"), (FALSE, TRUE)))
 """
 Term performing logical negation of its argument.
 """
 
-IF_THEN_ELSE = Abstraction.curried(
+IF_THEN_ELSE: Final = Abstraction.curried(
     ("p", "a", "b"),
     Application.with_arguments(Variable("p"), (Variable("a"), Variable("b")))
 )

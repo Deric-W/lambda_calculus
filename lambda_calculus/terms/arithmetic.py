@@ -2,6 +2,7 @@
 
 """Implementations of natural numbers and arithmetic operators"""
 
+from typing import Final
 from . import Term, Variable, Abstraction, Application
 from .logic import TRUE, FALSE
 
@@ -16,13 +17,13 @@ __all__ = (
     "number"
 )
 
-ISZERO = Variable("n").apply_to(FALSE.abstract("x"), TRUE).abstract("n")
+ISZERO: Final = Variable("n").apply_to(FALSE.abstract("x"), TRUE).abstract("n")
 """
 Term which evaluates to :const:`lambda_calculus.terms.logic.TRUE`
 if its argument is zero, :const:`lambda_calculus.terms.logic.FALSE` otherwise
 """
 
-SUCCESSOR = Abstraction.curried(
+SUCCESSOR: Final = Abstraction.curried(
     ("n", "f", "x"),
     Application(
         Variable("f"),
@@ -36,7 +37,7 @@ SUCCESSOR = Abstraction.curried(
 Term evaluating to its argument incremented by one.
 """
 
-PREDECESSOR = Abstraction.curried(
+PREDECESSOR: Final = Abstraction.curried(
     ("n", "f", "x"),
     Application.with_arguments(
         Variable("n"),
@@ -60,7 +61,7 @@ PREDECESSOR = Abstraction.curried(
 Term ealuating to its argument decremented by one.
 """
 
-ADD = Abstraction.curried(
+ADD: Final = Abstraction.curried(
     ("m", "n", "f", "x"),
     Application.with_arguments(
         Variable("m"),
@@ -77,7 +78,7 @@ ADD = Abstraction.curried(
 Term evaluating to the sum of its two arguments.
 """
 
-SUBTRACT = Abstraction.curried(
+SUBTRACT: Final = Abstraction.curried(
     ("m", "n"),
     Application.with_arguments(
         Variable("n"),
@@ -88,7 +89,7 @@ SUBTRACT = Abstraction.curried(
 Term evaluating to the difference of its two arguments.
 """
 
-MULTIPLY = Abstraction.curried(
+MULTIPLY: Final = Abstraction.curried(
     ("m", "n", "f"),
     Application(
         Variable("m"),
@@ -102,7 +103,7 @@ MULTIPLY = Abstraction.curried(
 Term evaluating to the product of its two arguments.
 """
 
-POWER = Abstraction.curried(
+POWER: Final = Abstraction.curried(
     ("b", "e"),
     Application(
         Variable("e"),

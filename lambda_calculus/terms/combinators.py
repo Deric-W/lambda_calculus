@@ -2,6 +2,7 @@
 
 """Common combinators"""
 
+from typing import Final
 from . import Variable, Application
 
 __all__ = (
@@ -16,7 +17,7 @@ __all__ = (
     "OMEGA"
 )
 
-Y = Application(
+Y: Final = Application(
     Variable("g").apply_to(
         Variable("x").apply_to(Variable("x"))
     ).abstract("x"),
@@ -28,7 +29,7 @@ Y = Application(
 Y combinator used to define recursive terms.
 """
 
-S = Variable("x").apply_to(
+S: Final = Variable("x").apply_to(
     Variable("z"),
     Variable("y").apply_to(Variable("z"))
 ).abstract("x", "y", "z")
@@ -36,24 +37,24 @@ S = Variable("x").apply_to(
 S combinator of the SKI combinator calculus.
 """
 
-K = Variable("x").abstract("x", "y")
+K: Final = Variable("x").abstract("x", "y")
 """
 K combinator of the SKI combinator calculus.
 """
 
-I = Variable("x").abstract("x")
+I: Final = Variable("x").abstract("x")
 """
 I combinator of the SKI combinator calculus.
 """
 
-B = Variable("x").apply_to(
+B: Final = Variable("x").apply_to(
     Variable("y").apply_to(Variable("z"))
 ).abstract("x", "y", "z")
 """
 B combinator of the BCKW combinator calculus.
 """
 
-C = Variable("x").apply_to(
+C: Final = Variable("x").apply_to(
     Variable("z"),
     Variable("y")
 ).abstract("x", "y", "z")
@@ -61,7 +62,7 @@ C = Variable("x").apply_to(
 C combinator of the BCKW combinator calculus.
 """
 
-W = Variable("x").apply_to(
+W: Final = Variable("x").apply_to(
     Variable("y"),
     Variable("y")
 ).abstract("x", "y")
@@ -69,14 +70,14 @@ W = Variable("x").apply_to(
 W combinator of the BCKW combinator calculus.
 """
 
-DELTA = Variable("x").apply_to(
+DELTA: Final = Variable("x").apply_to(
     Variable("x")
 ).abstract("x")
 """
 Term applying its argument to itself.
 """
 
-OMEGA = DELTA.apply_to(DELTA)
+OMEGA: Final = DELTA.apply_to(DELTA)
 """
 Smallest term with no beta normal form.
 """
