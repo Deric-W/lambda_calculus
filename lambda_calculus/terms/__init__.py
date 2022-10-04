@@ -6,7 +6,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from collections.abc import Sequence, Set, Iterable, Iterator
 from dataclasses import dataclass
-from typing import TypeVar
+from typing import TypeVar, final
 from .. import visitors
 from ..errors import CollisionError
 from ..visitors import walking
@@ -128,6 +128,7 @@ class Term(Iterable["Term[V]"]):
         return not self.free_variables()
 
 
+@final
 @dataclass(unsafe_hash=True, slots=True)
 class Variable(Term[V]):
     """
@@ -197,6 +198,7 @@ class Variable(Term[V]):
         return visitor.visit_variable(self)
 
 
+@final
 @dataclass(unsafe_hash=True, slots=True)
 class Abstraction(Term[V]):
     """
@@ -316,6 +318,7 @@ class Abstraction(Term[V]):
         )
 
 
+@final
 @dataclass(unsafe_hash=True, slots=True)
 class Application(Term[V]):
     """
