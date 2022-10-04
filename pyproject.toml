@@ -24,6 +24,7 @@ email = "eric_niklas.wolf@mailbox.tu-dresden.de"
 
 [project.urls]
 Repository = "https://github.com/Deric-W/lambda_calculus"
+Documentation = "http://lambda-calculus.readthedocs.io/"
 Bugtracker = "https://github.com/Deric-W/lambda_calculus/issues"
 
 [build-system]
