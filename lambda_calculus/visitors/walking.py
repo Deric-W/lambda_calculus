@@ -16,10 +16,21 @@ V = TypeVar("V")
 
 
 class DepthFirstVisitor(BottomUpVisitor[Iterator["terms.Term[V]"], V]):
-    """Visitor yielding subterms depth first"""
+    """
+    Visitor yielding subterms depth first
+
+    Type Variables:
+
+        V: represents the type of variables used in terms
+    """
 
     def visit_variable(self, variable: terms.Variable[V]) -> Iterator[terms.Term[V]]:
-        """visit a Variable term"""
+        """
+        Visit a Variable term.
+
+        :param variable: variable term to visit
+        :return: Iterator yielding the term
+        """
         yield variable
 
     def ascend_abstraction(
@@ -27,7 +38,13 @@ class DepthFirstVisitor(BottomUpVisitor[Iterator["terms.Term[V]"], V]):
         abstraction: terms.Abstraction[V],
         body: Iterator[terms.Term[V]]
     ) -> Iterator[terms.Term[V]]:
-        """visit an Abstraction term after visiting its body"""
+        """
+        Visit an Abstraction term after visiting its body.
+
+        :param abstraction: abstraction term to visit
+        :param body: Iterator produced by visiting its body
+        :return: term appended to its body Iterator
+        """
         yield from body
         yield abstraction
 
@@ -37,7 +54,14 @@ class DepthFirstVisitor(BottomUpVisitor[Iterator["terms.Term[V]"], V]):
         abstraction: Iterator[terms.Term[V]],
         argument: Iterator[terms.Term[V]]
     ) -> Iterator[terms.Term[V]]:
-        """visit an Application term after visiting its abstraction and argument"""
+        """
+        Visit an Application term after visiting its abstraction and argument.
+
+        :param application: application term to visit
+        :param abstraction: Iterator produced by visiting its abstraction
+        :param argument: Iterator produced by visiting its argument
+        :return: term appended to its abstraction and argument Iterators
+        """
         yield from abstraction
         yield from argument
         yield application

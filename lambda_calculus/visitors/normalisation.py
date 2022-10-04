@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-"""Visitor for normalisation"""
+"""Visitor for term normalisation"""
 
 from __future__ import annotations
 from collections.abc import Iterator
@@ -22,7 +22,9 @@ Step: TypeAlias = tuple["Conversion", terms.Term[str]]
 
 @unique
 class Conversion(Enum):
-    """Conversion performed by normalisation"""
+    """
+    Conversion performed by normalisation
+    """
     ALPHA = 0
     BETA = 1
 
@@ -32,28 +34,54 @@ class BetaNormalisingVisitor(Visitor[Iterator[Step], str]):
     """
     Visitor which transforms a term into its beta normal form,
     yielding intermediate steps until it is reached
+
+    No steps are yielded if the term is already in its beta normal form.
+
+    Remember that some terms dont thave a beta normal form and
+    can cause infinite recursion.
     """
 
     __slots__ = ()
 
     def skip_intermediate(self, term: terms.Term[str]) -> terms.Term[str]:
-        """return the beta normal form directly"""
+        """
+        Calculate the beta normal form directly.
+        
+        :param term: term which should be transformed into ist beta normal form
+        :return: new term representing the beta normal form if it exists
+        """
         result = term
         for _, intermediate in term.accept(self):
             result = intermediate
         return result
 
     def visit_variable(self, variable: terms.Variable[str]) -> Iterator[Step]:
-        """visit a Variable term"""
+        """
+        Visit a Variable term.
+
+        :param variable: variable term to visit
+        :return: empty Iterator, variables are already in beta normal form
+        """
         return iter(())
 
     def visit_abstraction(self, abstraction: terms.Abstraction[str]) -> Iterator[Step]:
-        """visit an Abstraction term"""
+        """
+        Visit an Abstraction term.
+
+        :param abstraction: abstraction term to visit
+        :return: Iterator yielding steps performed on its body
+        """
         results = abstraction.body.accept(self)
         return map(lambda s: (s[0], terms.Abstraction(abstraction.bound, s[1])), results)
 
     def beta_reducation(self, abstraction: terms.Abstraction[str], argument: terms.Term[str]) -> Generator[Step, None, terms.Term[str]]:
-        """perform beta reduction of an application"""
+        """
+        Perform beta reduction of an application.
+        
+        :param abstraction: abstraction of the application
+        :param argument: argument of the application
+        :return: Generator yielding steps and returning the reduced term
+        """
         conversions = CountingSubstitution.from_substitution(abstraction.bound, argument).trace()
         reduced = yield from map(
             lambda body: (
@@ -66,7 +94,15 @@ class BetaNormalisingVisitor(Visitor[Iterator[Step], str]):
         return reduced      # type: ignore
 
     def visit_application(self, application: terms.Application[str]) -> Iterator[Step]:
-        """visit an Application term"""
+        """
+        Visit an Application term
+
+        The abstraction and argument are not automatically visited.
+
+        :param application: application term to visit
+        :return: steps for performing beta reduction if possible
+                 and performed on its result or abstraction and argument
+        """
         if isinstance(application.abstraction, terms.Abstraction):
             # normal order dictates we reduce the leftmost outermost redex first
             reduced = yield from self.beta_reducation(application.abstraction, application.argument)
