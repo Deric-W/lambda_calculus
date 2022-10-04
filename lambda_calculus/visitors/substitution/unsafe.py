@@ -3,7 +3,6 @@
 """Substitutions which dont check if the substitutions are valid"""
 
 from __future__ import annotations
-from collections.abc import Set
 from typing import TypeVar, final
 from ... import terms
 from . import DeferrableSubstitution
@@ -28,18 +27,14 @@ class UnsafeSubstitution(DeferrableSubstitution[V]):
 
     value: terms.Term[V]
 
-    free_variables: Set[V]
-
     __slots__ = (
         "variable",
-        "value",
-        "free_variables"
+        "value"
     )
 
-    def __init__(self, variable: V, value: terms.Term[V], free_variables: Set[V]) -> None:
+    def __init__(self, variable: V, value: terms.Term[V]) -> None:
         self.variable = variable
         self.value = value
-        self.free_variables = free_variables
 
     @classmethod
     def from_substitution(cls, variable: V, value: terms.Term[V]) -> UnsafeSubstitution[V]:
@@ -50,7 +45,7 @@ class UnsafeSubstitution(DeferrableSubstitution[V]):
         :param value: value which should be substituted
         :return: new instance
         """
-        return cls(variable, value, value.free_variables())
+        return cls(variable, value)
 
     def visit_variable(self, variable: terms.Variable[V]) -> terms.Term[V]:
         """

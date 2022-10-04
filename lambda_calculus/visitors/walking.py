@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 from collections.abc import Iterator
-from typing import TypeVar
+from typing import TypeVar, final
 from .. import terms
 from . import BottomUpVisitor
 
@@ -15,6 +15,7 @@ __all__ = (
 V = TypeVar("V")
 
 
+@final
 class DepthFirstVisitor(BottomUpVisitor[Iterator["terms.Term[V]"], V]):
     """
     Visitor yielding subterms depth first
@@ -23,6 +24,8 @@ class DepthFirstVisitor(BottomUpVisitor[Iterator["terms.Term[V]"], V]):
 
         V: represents the type of variables used in terms
     """
+
+    __slots__ = ()
 
     def visit_variable(self, variable: terms.Variable[V]) -> Iterator[terms.Term[V]]:
         """

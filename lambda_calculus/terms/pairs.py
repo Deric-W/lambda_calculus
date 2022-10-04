@@ -2,6 +2,7 @@
 
 """Implementation of pairs"""
 
+from typing import Final
 from . import Variable, Abstraction, Application
 from .logic import TRUE, FALSE
 
@@ -13,7 +14,7 @@ __all__ = (
     "NULL"
 )
 
-PAIR = Abstraction.curried(
+PAIR: Final = Abstraction.curried(
     ("x", "y", "f"),
     Application.with_arguments(
         Variable("f"),
@@ -24,22 +25,22 @@ PAIR = Abstraction.curried(
 Term evaluating to a ordered pair of its two arguments.
 """
 
-FIRST = Abstraction("p", Application(Variable("p"), TRUE))
+FIRST: Final = Abstraction("p", Application(Variable("p"), TRUE))
 """
 Term evaluating to the first value in its argument.
 """
 
-SECOND = Abstraction("p", Application(Variable("p"), FALSE))
+SECOND: Final = Abstraction("p", Application(Variable("p"), FALSE))
 """
 Term evaluating to the second value in its argument.
 """
 
-NIL = Abstraction("x", TRUE)
+NIL: Final = Abstraction("x", TRUE)
 """
 Special Term encoding an empty pair.
 """
 
-NULL = Abstraction(
+NULL: Final = Abstraction(
     "p",
     Application(
         Variable("p"),
