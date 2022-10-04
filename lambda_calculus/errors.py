@@ -14,7 +14,17 @@ V = TypeVar("V")
 
 
 class CollisionError(ValueError, Generic[V]):
-    """Exception thrown when a variable already exists"""
+    """
+    Exception thrown when a variable already exists,
+    for example as a free variable.
+
+    Type Variables:
+
+        V: represents the type of variables
+
+    :param message: message to be displayed
+    :param collisions: variables which already exist
+    """
 
     message: str
 

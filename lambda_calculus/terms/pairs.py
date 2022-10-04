@@ -20,12 +20,24 @@ PAIR = Abstraction.curried(
         (Variable("x"), Variable("y"))
     )
 )
+"""
+Term evaluating to a ordered pair of its two arguments.
+"""
 
 FIRST = Abstraction("p", Application(Variable("p"), TRUE))
+"""
+Term evaluating to the first value in its argument.
+"""
 
 SECOND = Abstraction("p", Application(Variable("p"), FALSE))
+"""
+Term evaluating to the second value in its argument.
+"""
 
 NIL = Abstraction("x", TRUE)
+"""
+Special Term encoding an empty pair.
+"""
 
 NULL = Abstraction(
     "p",
@@ -37,3 +49,6 @@ NULL = Abstraction(
         )
     )
 )
+"""
+Term evaluating to logic.TRUE if its argument is NIL, logic.FALSE otherwise.
+"""

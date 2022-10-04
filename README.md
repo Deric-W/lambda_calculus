@@ -2,14 +2,17 @@
 
 ![Tests](https://github.com/Deric-W/lambda_calculus/actions/workflows/Tests.yaml/badge.svg)
 [![codecov](https://codecov.io/gh/Deric-W/lambda_calculus/branch/main/graph/badge.svg?token=SU3982mC17)](https://codecov.io/gh/Deric-W/lambda_calculus)
+[![Documentation Status](https://readthedocs.org/projects/lambda-calculus/badge/?version=stable)](https://lambda-calculus.readthedocs.io/en/stable/?badge=stable)
 
-The `lambda_calculus` package contains classes which implement basic operations of the lambda calculus.
+The [`lambda_calculus`](https://pypi.org/project/lambda-calculus/) package contains classes which implement basic operations of the lambda calculus.
 
 To use it, simply import the classes `Variable`, `Abstraction` and `Application` from this package
 and nest them to create more complex lambda terms.
 
 You can also use the `visitors` subpackage to define your own operations on terms or
 use predefined ones from the `terms` subpackage.
+
+More information is available on [Read the Docs](https://lambda-calculus.readthedocs.io/).
 
 ## Notice
 

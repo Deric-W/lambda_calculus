@@ -24,6 +24,7 @@ email = "eric_niklas.wolf@mailbox.tu-dresden.de"
 
 [project.urls]
 Repository = "https://github.com/Deric-W/lambda_calculus"
+Documentation = "http://lambda-calculus.readthedocs.io/"
 Bugtracker = "https://github.com/Deric-W/lambda_calculus/issues"
 
 [build-system]
@@ -43,3 +44,18 @@ warn_redundant_casts = true
 warn_unused_ignores = true
 warn_return_any = true
 warn_unreachable = true
+
+[tool.sphinx-pyproject]
+project = "lambda_calculus"
+html_theme = "sphinx_rtd_theme"
+extensions = [
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.viewcode"
+]
+autodoc_typehints_format = "short"
+autodoc_warningiserror = true
+
+[tool.sphinx-pyproject.autodoc_default_options]
+show-inheritance = true
+member-order = "bysource"
