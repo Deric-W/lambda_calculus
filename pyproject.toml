@@ -1,6 +1,6 @@
 [project]
 name = "lambda_calculus"
-version = "2.2.2"
+version = "2.2.3"
 description = "Implementation of the Lambda calculus"
 requires-python = ">=3.10"
 keywords = []
@@ -47,6 +47,7 @@ warn_unreachable = true
 
 [tool.sphinx-pyproject]
 project = "lambda_calculus"
+copyright = "2022 Eric Wolf"
 html_theme = "sphinx_rtd_theme"
 extensions = [
     "sphinx.ext.intersphinx",
