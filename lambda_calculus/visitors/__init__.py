@@ -167,7 +167,7 @@ class DeferrableVisitor(Visitor[T, V]):
         """
         Visit an Application term.
 
-        :param abstraction: application term to visit
+        :param application: application term to visit
         :return: tuple containing a value as required by its type variable
                  and visitors to be used for visiting its abstraction and argument
         """

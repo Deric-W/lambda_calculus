@@ -23,8 +23,8 @@ V = TypeVar("V")
 
 class RenamingSubstitution(DeferrableSubstitution[V]):
     """
-    Visitor which replaces a free Variable with another term
-    Renames bound variables if a free variable gets bound
+    ABC for Substitutions which rename
+    bound variables if a free variable gets bound.
     """
 
     variable: V
@@ -38,39 +38,67 @@ class RenamingSubstitution(DeferrableSubstitution[V]):
 
     @abstractmethod
     def prevent_collision(self, abstraction: terms.Abstraction[V]) -> terms.Abstraction[V]:
-        """prevent collisions by renaming bound variables"""
+        """
+        Prevent collisions by renaming bound variables.
+
+        :param abstraction: abstraction term which could bind free variables
+        :return: abstraction term which does not bind free variables
+        """
         raise NotImplementedError()
 
     @final
     def trace(self) -> TracingDecorator[V]:
-        """return a new visitor which yields when an alpha conversion occurs"""
+        """
+        Create a new visitor which yields when an alpha conversion occurs.
+
+        :return: new visitor wrapping this instance
+        """
         return TracingDecorator(self)
 
     @final
     def visit_variable(self, variable: terms.Variable[V]) -> terms.Term[V]:
-        """visit a Variable term"""
+        """
+        Visit a Variable term.
+
+        :param variable: variable term to visit
+        :return: variable term or value which should be substituted
+        """
         if variable.name != self.variable:
             return variable
         return self.value
 
     @final
     def defer_abstraction(self, abstraction: terms.Abstraction[V]) -> tuple[terms.Abstraction[V], RenamingSubstitution[V] | None]:
-        """visit an Abstraction term and return the visitor used to visit its body"""
+        """
+        Visit an Abstraction term.
+
+        :param abstraction: abstraction term to visit
+        :return: tuple containing an abstraction term not binding free variables and
+                 this visitor to be used for visiting its body if variable is not bound
+        """
         if abstraction.bound == self.variable:
             return abstraction, None
         return self.prevent_collision(abstraction), self
 
     @final
     def defer_application(self, application: terms.Application[V]) -> tuple[terms.Application[V], RenamingSubstitution[V], RenamingSubstitution[V]]:
-        """visit an Application term and return the visitors used to visit its abstraction and argument"""
+        """
+        Visit an Application term.
+
+        :param application: application term to visit
+        :return: tuple containing the application term and this visitor
+                 to be used for visiting its abstraction and argument
+        """
         return application, self, self
 
 
 @final
 class TracingDecorator(Visitor[Generator["terms.Term[V]", None, "terms.Term[V]"], V]):
     """
-    Visitor which transforms a RenamingSubstitution into an Generator
-    which yields after performing an alpha conversion
+    Visitor which transforms a :class:`RenamingSubstitution` into an Generator
+    which yields after performing an alpha conversion and returns the term with substitutions.
+
+    :param substitution: instance to wrap
     """
 
     substitution: RenamingSubstitution[V]
@@ -81,13 +109,25 @@ class TracingDecorator(Visitor[Generator["terms.Term[V]", None, "terms.Term[V]"]
         self.substitution = substitution
 
     def visit_variable(self, variable: terms.Variable[V]) -> Generator[terms.Variable[V], None, terms.Term[V]]:
-        """visit a Variable term"""
+        """
+        Visit a Variable term.
+
+        :param variable: variable term to visit
+        :return: empty Generator returning the result
+                 of :meth:`RenamingSubstitution.visit_variable`
+        """
         return self.substitution.visit_variable(variable)
         # to create a generator
         yield variable  # type: ignore[unreachable]
 
     def visit_abstraction(self, abstraction: terms.Abstraction[V]) -> Generator[terms.Abstraction[V], None, terms.Abstraction[V]]:
-        """visit an Abstraction term"""
+        """
+        Visit an Abstraction term
+
+        :param abstraction: abstraction term to visit
+        :return: Generator yielding alpha conversions and
+                 returning the term with substitutions
+        """
         substituted, visitor = self.substitution.defer_abstraction(abstraction)
         if visitor is None:
             return substituted
@@ -98,7 +138,13 @@ class TracingDecorator(Visitor[Generator["terms.Term[V]", None, "terms.Term[V]"]
         return terms.Abstraction(substituted.bound, body)
 
     def visit_application(self, application: terms.Application[V]) -> Generator[terms.Application[V], None, terms.Application[V]]:
-        """visit an Application term"""
+        """
+        Visit an Application term
+
+        :param appliation: application term to visit
+        :return: Generator yielding alpha conversions and
+                 returning the term with substitutions
+        """
         # distinguish between last alpha conversion (step) and
         # substituted abstraction (abstraction)
         abstraction = step = application.abstraction
@@ -119,8 +165,12 @@ class TracingDecorator(Visitor[Generator["terms.Term[V]", None, "terms.Term[V]"]
 @final
 class CountingSubstitution(RenamingSubstitution[str]):
     """
-    Visitor which replaces a free Variable with another term
-    Renames bound variables if a free variable gets bound by appending a number
+    Substitution which renames bound variables
+    if a free variable gets bound by appending a number.
+
+    :param variable: variable to substitute
+    :param value: value which should be substituted
+    :param free_variables: free variables which should not be bound
     """
 
     free_variables: Set[str]
@@ -134,11 +184,22 @@ class CountingSubstitution(RenamingSubstitution[str]):
 
     @classmethod
     def from_substitution(cls, variable: str, value: terms.Term[str]) -> CountingSubstitution:
-        """create an instance from the substitution it should perform"""
+        """
+        Create an instance from the substitution it should perform
+
+        :param variable: variable to substitute
+        :param value: value which should be substituted
+        :return: new instance with free_variables set to the free variables of value
+        """
         return cls(variable, value, value.free_variables())
 
     def prevent_collision(self, abstraction: terms.Abstraction[str]) -> terms.Abstraction[str]:
-        """prevent collisions by renaming bound variables"""
+        """
+        Prevent collisions by appending a number.
+
+        :param abstraction: abstraction term which could bind free variables
+        :return: abstraction term which does not bind free variables
+        """
         if abstraction.bound in self.free_variables:
             used_variables = abstraction.body.bound_variables() \
                 | abstraction.free_variables() \

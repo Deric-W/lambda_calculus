@@ -53,6 +53,7 @@ extensions = [
     "sphinx.ext.viewcode"
 ]
 autodoc_typehints_format = "short"
+autodoc_warningiserror = true
 
 [tool.sphinx-pyproject.autodoc_default_options]
 show-inheritance = true

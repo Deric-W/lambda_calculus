@@ -18,8 +18,10 @@ V = TypeVar("V")
 @final
 class UnsafeSubstitution(DeferrableSubstitution[V]):
     """
-    Visitor which replaces a free Variable with another term
-    Does nothing if a free variable gets bound
+    Substitution which does not check if a free variable gets bound.
+
+    :param variable: variable to substitute
+    :param value: value which should be substituted
     """
 
     variable: V
@@ -41,21 +43,44 @@ class UnsafeSubstitution(DeferrableSubstitution[V]):
 
     @classmethod
     def from_substitution(cls, variable: V, value: terms.Term[V]) -> UnsafeSubstitution[V]:
-        """create an instance from the substitution it should perform"""
+        """
+        Create an instance from the substitution it should perform
+
+        :param variable: variable to substitute
+        :param value: value which should be substituted
+        :return: new instance
+        """
         return cls(variable, value, value.free_variables())
 
     def visit_variable(self, variable: terms.Variable[V]) -> terms.Term[V]:
-        """visit a Variable term"""
+        """
+        Visit a Variable term.
+
+        :param variable: variable term to visit
+        :return: variable term or value which should be substituted
+        """
         if variable.name != self.variable:
             return variable
         return self.value
 
     def defer_abstraction(self, abstraction: terms.Abstraction[V]) -> tuple[terms.Abstraction[V], UnsafeSubstitution[V] | None]:
-        """visit an Abstraction term and return the visitor used to visit its body"""
+        """
+        Visit an Abstraction term.
+
+        :param abstraction: abstraction term to visit
+        :return: tuple containing the abstraction term and this visitor
+                 to be used for visiting its body if variable is not bound
+        """
         if abstraction.bound == self.variable:
             return abstraction, None
         return abstraction, self
 
     def defer_application(self, application: terms.Application[V]) -> tuple[terms.Application[V], UnsafeSubstitution[V], UnsafeSubstitution[V]]:
-        """visit an Application term and return the visitors used to visit its abstraction and argument"""
+        """
+        Visit an Application term.
+
+        :param application: application term to visit
+        :return: tuple containing the application term and this visitor
+                 to be used for visiting its abstraction and argument
+        """
         return application, self, self
