@@ -18,7 +18,8 @@ __all__ = (
 
 ISZERO = Variable("n").apply_to(FALSE.abstract("x"), TRUE).abstract("n")
 """
-Term which evaluates to logic.TRUE if its argument is zero, logic.FALSE otherwise
+Term which evaluates to :const:`lambda_calculus.terms.logic.TRUE`
+if its argument is zero, :const:`lambda_calculus.terms.logic.FALSE` otherwise
 """
 
 SUCCESSOR = Abstraction.curried(

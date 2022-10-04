@@ -29,7 +29,11 @@ V = TypeVar("V")
 
 class Term(Iterable["Term[V]"]):
     """
-    ABC for Lambda terms
+    ABC for Lambda terms.
+
+    Type Variables:
+
+        V: represents the type of variables used in terms
     """
 
     __slots__ = ("__weakref__",)
