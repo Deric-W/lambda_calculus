@@ -280,7 +280,7 @@ class Abstraction(Term[V]):
             )
         raise CollisionError("new variable would bind free variable in body", (new,))
 
-    def eta_reduction(self) -> Term[V]:   # type: ignore[return]
+    def eta_reduction(self) -> Term[V]:
         """
         Remove a useless abstraction.
 
@@ -291,8 +291,6 @@ class Abstraction(Term[V]):
             case Application(f, Variable(x)) if x == self.bound and x not in f.free_variables():
                 return f
             case _:
-                # mypy detects missing returns
-                # because of https://github.com/python/mypy/issues/12534
                 raise ValueError("abstraction is not useless")
 
     def accept(self, visitor: visitors.Visitor[T, V]) -> T:
