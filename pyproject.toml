@@ -69,6 +69,16 @@ release = [
     "typecheck"
 ]
 
+[tool.hatch.envs.docs]
+dependencies = [
+    "sphinx ~= 5.2.0",
+    "sphinx-pyproject ~= 0.1.0",
+    "sphinx-rtd-theme ~= 1.0.0"
+]
+
+[tool.hatch.envs.docs.scripts]
+build = "sphinx-build {args} docs docs/_build"
+
 [tool.hatch.build.targets.sdist]
 exclude = ["/.github"]
 
