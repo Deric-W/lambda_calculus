@@ -28,11 +28,45 @@ Documentation = "http://lambda-calculus.readthedocs.io/"
 Bugtracker = "https://github.com/Deric-W/lambda_calculus/issues"
 
 [build-system]
-requires = ["setuptools >= 61.0.0"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.setuptools.package-data]
-lambda_calculus = ["py.typed"]
+[tool.hatch.envs.test]
+dependencies = [
+    "coverage[toml] == 7.*"
+]
+
+[tool.hatch.envs.test.scripts]
+test = "python -m unittest discover {args}"
+cov-run = "coverage run -m unittest discover {args}"
+cov-report = [
+    "- coverage combine",
+    "coverage report"
+]
+cov = [
+    "cov-run",
+    "cov-report"
+]
+
+[[tool.hatch.envs.test.matrix]]
+python = ["3.10", "3.11", "3.12"]
+
+[tool.hatch.envs.lint]
+dependencies = [
+    "mypy >= 1.0.0",
+    "pylint >= 2.12.2",
+    "flake8 >= 5.0.0",
+    "isort >= 5.10.1"
+]
+
+[tool.hatch.envs.lint.scripts]
+typecheck = "mypy -p lambda_calculus"
+release = [
+    "typecheck"
+]
+
+[tool.hatch.build.targets.sdist]
+exclude = ["/.github"]
 
 [tool.mypy]
 disallow_any_unimported = true
@@ -44,6 +78,11 @@ warn_redundant_casts = true
 warn_unused_ignores = true
 warn_return_any = true
 warn_unreachable = true
+
+[tool.coverage.run]
+source_pkgs = ["lambda_calculus"]
+branch = true
+parallel = true
 
 [tool.sphinx-pyproject]
 project = "lambda_calculus"

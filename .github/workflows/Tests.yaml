@@ -4,42 +4,41 @@ on: [push, workflow_dispatch]
 
 jobs:
   Test:
-    strategy:
-      matrix:
-        python-version: ["3.10", "3.11", "3.12"]
-        os: [ubuntu-latest]
-
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: |
+          3.10
+          3.11
+          3.12
 
-    - name: Install test dependencies
-      run: python -m pip install mypy coverage build
+    - name: Install Hatch
+      run: python -m pip install hatch
+    
+    - name: Perform release check
+      run: hatch run lint:release
 
-    - name: Build wheel
-      run: python -m build
+    - name: Run tests
+      run: hatch run test:cov --verbose
 
-    - name: Install wheel
-      run: python -m pip install --no-cache-dir dist/lambda_calculus-*.whl
-
-    - name: Run MyPy
-      run: python -m mypy -p lambda_calculus
-
-    - name: Run tests and generate report
-      run: coverage run -m unittest discover --verbose
+    - name: Generate report
+      run: hatch env run -e test.py3.12 coverage xml
 
     - name: Upload coverage
       uses: codecov/codecov-action@v3
       with:
         flags: ${{ runner.os }}
         verbose: true
+
+    - name: Build wheel
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+      run: hatch build
 
     - name: Publish package
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
