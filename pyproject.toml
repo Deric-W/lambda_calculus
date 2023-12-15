@@ -60,6 +60,10 @@ dependencies = [
 ]
 
 [tool.hatch.envs.lint.scripts]
+lint = [
+    "- flake8 src/lambda_calculus",
+    "- pylint src/lambda_calculus"
+]
 typecheck = "mypy -p lambda_calculus"
 release = [
     "typecheck"
@@ -78,6 +82,9 @@ warn_redundant_casts = true
 warn_unused_ignores = true
 warn_return_any = true
 warn_unreachable = true
+
+[tool.pylint]
+max-line-length = 100
 
 [tool.coverage.run]
 source_pkgs = ["lambda_calculus"]
