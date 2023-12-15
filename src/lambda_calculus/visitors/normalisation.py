@@ -46,7 +46,7 @@ class BetaNormalisingVisitor(Visitor[Iterator[Step], str]):
     def skip_intermediate(self, term: terms.Term[str]) -> terms.Term[str]:
         """
         Calculate the beta normal form directly.
-        
+
         :param term: term which should be transformed into ist beta normal form
         :return: new term representing the beta normal form if it exists
         """
@@ -77,7 +77,7 @@ class BetaNormalisingVisitor(Visitor[Iterator[Step], str]):
     def beta_reducation(self, abstraction: terms.Abstraction[str], argument: terms.Term[str]) -> Generator[Step, None, terms.Term[str]]:
         """
         Perform beta reduction of an application.
-        
+
         :param abstraction: abstraction of the application
         :param argument: argument of the application
         :return: Generator yielding steps and returning the reduced term
