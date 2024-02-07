@@ -31,10 +31,12 @@ jobs:
       run: hatch env run -e test.py3.12 coverage xml
 
     - name: Upload coverage
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         flags: ${{ runner.os }}
         verbose: true
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Build wheel
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
