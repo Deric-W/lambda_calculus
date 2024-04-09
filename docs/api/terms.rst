@@ -4,6 +4,7 @@ Package terms
 .. toctree::
    :maxdepth: 2
 
+   terms/abc
    terms/logic
    terms/arithmetic
    terms/pairs
