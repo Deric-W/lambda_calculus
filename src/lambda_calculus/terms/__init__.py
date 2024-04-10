@@ -17,6 +17,7 @@ __all__ = (
     "Variable",
     "Abstraction",
     "Application",
+    "abc",
     "arithmetic",
     "logic",
     "pairs",
