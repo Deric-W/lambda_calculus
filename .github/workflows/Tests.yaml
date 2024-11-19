@@ -31,7 +31,7 @@ jobs:
       run: hatch env run -e test.py3.12 coverage xml
 
     - name: Upload coverage
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       with:
         flags: ${{ runner.os }}
         verbose: true
