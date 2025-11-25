@@ -31,7 +31,7 @@ jobs:
       run: hatch test --all --cover-quiet --verbose
 
     - name: Generate report
-      run: hatch env run -e hatch-test.py3.12 coverage xml
+      run: hatch env run -e hatch-test.py3.13 coverage xml
 
     - name: Upload coverage
       uses: codecov/codecov-action@v5
