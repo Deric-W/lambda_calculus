@@ -3,17 +3,18 @@
 """Implementations of natural numbers and arithmetic operators"""
 
 from typing import Final
-from . import Term, Variable, Abstraction, Application
-from .logic import TRUE, FALSE
+
+from . import Abstraction, Application, Term, Variable
+from .logic import FALSE, TRUE
 
 __all__ = (
-    "ISZERO",
-    "SUCCESSOR",
-    "PREDECESSOR",
     "ADD",
-    "SUBTRACT",
+    "ISZERO",
     "MULTIPLY",
     "POWER",
+    "PREDECESSOR",
+    "SUBTRACT",
+    "SUCCESSOR",
     "number"
 )
 

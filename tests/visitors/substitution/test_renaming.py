@@ -2,10 +2,11 @@
 
 """Test for Visitor substituting a free variable without errors"""
 
-from unittest import TestCase
 from collections.abc import Generator, Iterable
 from itertools import count
-from lambda_calculus.terms import Variable, Abstraction, Application
+from unittest import TestCase
+
+from lambda_calculus.terms import Abstraction, Application, Variable
 from lambda_calculus.visitors.substitution import renaming
 
 

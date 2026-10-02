@@ -3,12 +3,13 @@
 """Errors raised by Term operations"""
 
 from __future__ import annotations
-from collections.abc import Collection
-from typing import TypeVar, Generic
 
-__all__ = (
-    "CollisionError",
-)
+from typing import TYPE_CHECKING, Generic, TypeVar
+
+if TYPE_CHECKING:
+    from collections.abc import Collection
+
+__all__ = ("CollisionError",)
 
 V = TypeVar("V")
 

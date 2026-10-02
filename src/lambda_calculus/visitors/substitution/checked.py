@@ -3,15 +3,17 @@
 """Substitutions checking if the substitutions are valid"""
 
 from __future__ import annotations
-from collections.abc import Set
-from typing import TypeVar, final
+
+from typing import TYPE_CHECKING, TypeVar, final
+
 from ... import terms
 from ...errors import CollisionError
 from . import Substitution
 
-__all__ = (
-    "CheckedSubstitution",
-)
+if TYPE_CHECKING:
+    from collections.abc import Set as AbstractSet
+
+__all__ = ("CheckedSubstitution",)
 
 V = TypeVar("V")
 
@@ -31,7 +33,7 @@ class CheckedSubstitution(Substitution[V]):
 
     value: terms.Term[V]
 
-    free_variables: Set[V]
+    free_variables: AbstractSet[V]
 
     bound_variables: dict[V, int]
 
@@ -42,7 +44,7 @@ class CheckedSubstitution(Substitution[V]):
         "bound_variables"
     )
 
-    def __init__(self, variable: V, value: terms.Term[V], free_variables: Set[V]) -> None:
+    def __init__(self, variable: V, value: terms.Term[V], free_variables: AbstractSet[V]) -> None:
         self.variable = variable
         self.value = value
         self.free_variables = free_variables

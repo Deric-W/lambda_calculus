@@ -3,8 +3,9 @@
 """Tests for arithmetic terms"""
 
 from unittest import TestCase
-from lambda_calculus.visitors.normalisation import BetaNormalisingVisitor
+
 from lambda_calculus.terms import Application, arithmetic, logic
+from lambda_calculus.visitors.normalisation import BetaNormalisingVisitor
 
 
 class OrderingTest(TestCase):

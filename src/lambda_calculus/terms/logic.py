@@ -3,16 +3,10 @@
 """Implementations of boolean values and logical operators"""
 
 from typing import Final
-from . import Variable, Abstraction, Application
 
-__all__ = (
-    "TRUE",
-    "FALSE",
-    "AND",
-    "OR",
-    "NOT",
-    "IF_THEN_ELSE"
-)
+from . import Abstraction, Application, Variable
+
+__all__ = ("AND", "FALSE", "IF_THEN_ELSE", "NOT", "OR", "TRUE")
 
 TRUE: Final = Abstraction.curried(("x", "y"), Variable("x"))
 """

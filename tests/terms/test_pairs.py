@@ -3,9 +3,10 @@
 """Tests for pair terms"""
 
 from unittest import TestCase
+
+from lambda_calculus.terms import Application, Term, Variable, pairs
+from lambda_calculus.terms.logic import FALSE, TRUE
 from lambda_calculus.visitors.normalisation import BetaNormalisingVisitor
-from lambda_calculus.terms import Term, Variable, Application, pairs
-from lambda_calculus.terms.logic import TRUE, FALSE
 
 
 class PairTest(TestCase):

@@ -3,7 +3,8 @@
 """Tests for term normalisation"""
 
 from unittest import TestCase
-from lambda_calculus.terms import Variable, Abstraction, Application
+
+from lambda_calculus.terms import Abstraction, Application, Variable
 from lambda_calculus.visitors import normalisation
 
 

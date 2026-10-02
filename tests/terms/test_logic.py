@@ -2,10 +2,11 @@
 
 """Tests for logic terms"""
 
-from unittest import TestCase
 from collections.abc import Iterable, Iterator
+from unittest import TestCase
+
+from lambda_calculus.terms import Application, Term, Variable, logic
 from lambda_calculus.visitors.normalisation import BetaNormalisingVisitor
-from lambda_calculus.terms import Term, Variable, Application, logic
 
 
 class LogicTest(TestCase):

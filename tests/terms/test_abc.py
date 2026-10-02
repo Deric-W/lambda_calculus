@@ -2,8 +2,9 @@
 
 """Tests for the predefined variables"""
 
-from unittest import TestCase
 from string import ascii_letters
+from unittest import TestCase
+
 from lambda_calculus.terms import Variable, abc
 
 

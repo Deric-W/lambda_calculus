@@ -3,6 +3,7 @@
 """Tests for combinator terms"""
 
 from unittest import TestCase
+
 from lambda_calculus.terms import Variable, combinators
 from lambda_calculus.visitors.normalisation import BetaNormalisingVisitor
 

@@ -3,17 +3,16 @@
 """Visitor for term normalisation"""
 
 from __future__ import annotations
-from collections.abc import Iterator
+
+from collections.abc import Generator, Iterator
 from enum import Enum, unique
-from typing import TypeVar, final, Generator, TypeAlias
+from typing import TypeAlias, TypeVar, final
+
 from .. import terms
 from . import Visitor
 from .substitution.renaming import CountingSubstitution
 
-__all__ = (
-    "Conversion",
-    "BetaNormalisingVisitor",
-)
+__all__ = ("BetaNormalisingVisitor", "Conversion")
 
 V = TypeVar("V")
 

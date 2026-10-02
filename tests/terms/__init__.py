@@ -3,7 +3,8 @@
 """Tests for the Term implementations"""
 
 from unittest import TestCase
-from lambda_calculus import Variable, Abstraction, Application
+
+from lambda_calculus import Abstraction, Application, Variable
 from lambda_calculus.errors import CollisionError
 
 

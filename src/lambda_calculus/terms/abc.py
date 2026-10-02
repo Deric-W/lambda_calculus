@@ -3,6 +3,7 @@
 """Predefined Variables for all ASCII letters"""
 
 from string import ascii_letters
+
 from . import Variable
 
 __all__ = tuple(ascii_letters)

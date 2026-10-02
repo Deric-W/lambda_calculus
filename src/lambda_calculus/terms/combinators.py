@@ -3,19 +3,10 @@
 """Common combinators"""
 
 from typing import Final
-from . import Variable, Application
 
-__all__ = (
-    "Y",
-    "S",
-    "K",
-    "I",
-    "B",
-    "C",
-    "W",
-    "DELTA",
-    "OMEGA"
-)
+from . import Application, Variable
+
+__all__ = ("DELTA", "OMEGA", "B", "C", "I", "K", "S", "W", "Y")
 
 Y: Final = Application(
     Variable("g").apply_to(

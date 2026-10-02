@@ -3,25 +3,30 @@
 """Lambda Terms"""
 
 from __future__ import annotations
+
 from abc import abstractmethod
-from collections.abc import Sequence, Set, Iterable, Iterator
+from collections.abc import Iterable, Iterator, Sequence
+from collections.abc import Set as AbstractSet
 from dataclasses import dataclass
-from typing import TypeVar, final
-from .. import visitors
+from typing import TYPE_CHECKING, TypeVar, final
+
 from ..errors import CollisionError
 from ..visitors import walking
 from ..visitors.substitution import checked
 
+if TYPE_CHECKING:
+    from .. import visitors
+
 __all__ = (
-    "Term",
-    "Variable",
     "Abstraction",
     "Application",
+    "Term",
+    "Variable",
     "abc",
     "arithmetic",
+    "combinators",
     "logic",
-    "pairs",
-    "combinators"
+    "pairs"
 )
 
 T = TypeVar("T")
@@ -55,7 +60,7 @@ class Term(Iterable["Term[V]"]):
         raise NotImplementedError()
 
     @abstractmethod
-    def free_variables(self) -> Set[V]:
+    def free_variables(self) -> AbstractSet[V]:
         """
         Calculate the free variables of this Term.
 
@@ -64,7 +69,7 @@ class Term(Iterable["Term[V]"]):
         raise NotImplementedError()
 
     @abstractmethod
-    def bound_variables(self) -> Set[V]:
+    def bound_variables(self) -> AbstractSet[V]:
         """
         Calculate the bound variables of this Term.
 
@@ -165,7 +170,7 @@ class Variable(Term[V]):
         """
         return str(self.name)
 
-    def free_variables(self) -> Set[V]:
+    def free_variables(self) -> AbstractSet[V]:
         """
         Calculate the free variables of this Term.
 
@@ -173,7 +178,7 @@ class Variable(Term[V]):
         """
         return {self.name}
 
-    def bound_variables(self) -> Set[V]:
+    def bound_variables(self) -> AbstractSet[V]:
         """
         Calculate the bound variables of this Term.
 
@@ -240,7 +245,7 @@ class Abstraction(Term[V]):
         """
         return f"(λ{self.bound}.{self.body})"
 
-    def free_variables(self) -> Set[V]:
+    def free_variables(self) -> AbstractSet[V]:
         """
         Calculate the free variables of this Term.
 
@@ -248,7 +253,7 @@ class Abstraction(Term[V]):
         """
         return self.body.free_variables() - {self.bound}
 
-    def bound_variables(self) -> Set[V]:
+    def bound_variables(self) -> AbstractSet[V]:
         """
         Calculate the free variables of this Term.
 
@@ -358,7 +363,7 @@ class Application(Term[V]):
         """
         return f"({self.abstraction} {self.argument})"
 
-    def free_variables(self) -> Set[V]:
+    def free_variables(self) -> AbstractSet[V]:
         """
         Calculate the free variables of this Term.
 
@@ -366,7 +371,7 @@ class Application(Term[V]):
         """
         return self.abstraction.free_variables() | self.argument.free_variables()
 
-    def bound_variables(self) -> Set[V]:
+    def bound_variables(self) -> AbstractSet[V]:
         """
         Calculate the free variables of this Term.
 

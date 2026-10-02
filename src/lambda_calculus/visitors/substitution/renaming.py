@@ -3,20 +3,19 @@
 """Substitutions performing automatic alpha conversion"""
 
 from __future__ import annotations
+
 from abc import abstractmethod
-from collections.abc import Set, Generator
+from collections.abc import Generator
+from collections.abc import Set as AbstractSet
 from itertools import count, filterfalse
 from typing import TypeVar, final
+
+from ... import terms
+from .. import Visitor
 from . import DeferrableSubstitution
 from .unsafe import UnsafeSubstitution
-from .. import Visitor
-from ... import terms
 
-__all__ = (
-    "RenamingSubstitution",
-    "TracingDecorator",
-    "CountingSubstitution"
-)
+__all__ = ("CountingSubstitution", "RenamingSubstitution", "TracingDecorator")
 
 V = TypeVar("V")
 
@@ -173,11 +172,13 @@ class CountingSubstitution(RenamingSubstitution[str]):
     :param free_variables: free variables which should not be bound
     """
 
-    free_variables: Set[str]
+    free_variables: AbstractSet[str]
 
     __slots__ = ("free_variables",)
 
-    def __init__(self, variable: str, value: terms.Term[str], free_variables: Set[str]) -> None:
+    def __init__(
+        self, variable: str, value: terms.Term[str], free_variables: AbstractSet[str]
+    ) -> None:
         self.variable = variable
         self.value = value
         self.free_variables = free_variables

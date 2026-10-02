@@ -3,16 +3,11 @@
 """Implementation of pairs"""
 
 from typing import Final
-from . import Variable, Abstraction, Application
-from .logic import TRUE, FALSE
 
-__all__ = (
-    "PAIR",
-    "FIRST",
-    "SECOND",
-    "NIL",
-    "NULL"
-)
+from . import Abstraction, Application, Variable
+from .logic import FALSE, TRUE
+
+__all__ = ("FIRST", "NIL", "NULL", "PAIR", "SECOND")
 
 PAIR: Final = Abstraction.curried(
     ("x", "y", "f"),

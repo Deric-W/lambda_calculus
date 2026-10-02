@@ -3,13 +3,15 @@
 """Substitutions which dont check if the substitutions are valid"""
 
 from __future__ import annotations
-from typing import TypeVar, final
-from ... import terms
+
+from typing import TYPE_CHECKING, TypeVar, final
+
 from . import DeferrableSubstitution
 
-__all__ = (
-    "UnsafeSubstitution",
-)
+if TYPE_CHECKING:
+    from ... import terms
+
+__all__ = ("UnsafeSubstitution",)
 
 V = TypeVar("V")
 

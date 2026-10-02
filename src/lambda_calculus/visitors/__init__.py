@@ -3,16 +3,19 @@
 """Visitors for performing operations on Terms"""
 
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import TypeVar, Generic, final
-from .. import terms
+from typing import TYPE_CHECKING, Generic, TypeVar, final
+
+if TYPE_CHECKING:
+    from .. import terms
 
 __all__ = (
-    "Visitor",
     "BottomUpVisitor",
     "DeferrableVisitor",
-    "substitution",
+    "Visitor",
     "normalisation",
+    "substitution",
     "walking"
 )
 

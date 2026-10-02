@@ -3,6 +3,7 @@
 """Tests for custom errors"""
 
 from unittest import TestCase
+
 from lambda_calculus import errors
 
 

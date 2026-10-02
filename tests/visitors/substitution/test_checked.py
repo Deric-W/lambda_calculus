@@ -3,8 +3,9 @@
 """Tests for variable substitution checking for bound free variables"""
 
 from unittest import TestCase
-from lambda_calculus.terms import Variable, Abstraction, Application
+
 from lambda_calculus.errors import CollisionError
+from lambda_calculus.terms import Abstraction, Application, Variable
 from lambda_calculus.visitors.substitution import checked
 
 

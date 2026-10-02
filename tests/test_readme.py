@@ -2,10 +2,14 @@
 
 """Tests for README examples"""
 
+from typing import TYPE_CHECKING
 from unittest import TestCase
-from lambda_calculus import Variable, Abstraction, Application
-from lambda_calculus.terms import Term
+
+from lambda_calculus import Abstraction, Application, Variable
 from lambda_calculus.visitors.normalisation import BetaNormalisingVisitor
+
+if TYPE_CHECKING:
+    from lambda_calculus.terms import Term
 
 
 class ExampleTest(TestCase):
