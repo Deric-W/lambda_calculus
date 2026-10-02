@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Tests for README examples"""
 
 from typing import TYPE_CHECKING

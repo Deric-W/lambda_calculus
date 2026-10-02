@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Tests for pair terms"""
 
 from unittest import TestCase

@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Implementation of pairs"""
 
 from typing import Final

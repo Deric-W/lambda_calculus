@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Test for Visitor substituting a free variable without errors"""
 
 from collections.abc import Generator, Iterable

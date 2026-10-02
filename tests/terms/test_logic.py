@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Tests for logic terms"""
 
 from collections.abc import Iterable, Iterator

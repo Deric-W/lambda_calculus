@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Lambda Terms"""
 
 from __future__ import annotations

@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Substitutions performing automatic alpha conversion"""
 
 from __future__ import annotations

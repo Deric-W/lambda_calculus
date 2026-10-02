@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Tests for the predefined variables"""
 
 from string import ascii_letters

@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Implementations of boolean values and logical operators"""
 
 from typing import Final

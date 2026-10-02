@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Visitors for variable substitution"""
 
 from __future__ import annotations

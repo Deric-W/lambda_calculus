@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Tests for term walking"""
 
 from unittest import TestCase

@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Tests for variable substitution checking for bound free variables"""
 
 from unittest import TestCase

@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Tests for the Term implementations"""
 
 from unittest import TestCase

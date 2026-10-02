@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Tests for custom errors"""
 
 from unittest import TestCase

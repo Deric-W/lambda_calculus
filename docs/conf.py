@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """Sphinx configuration"""
 
 import os.path

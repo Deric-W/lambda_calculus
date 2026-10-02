@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Visitors for performing operations on Terms"""
 
 from __future__ import annotations

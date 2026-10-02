@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Implementations of natural numbers and arithmetic operators"""
 
 from typing import Final

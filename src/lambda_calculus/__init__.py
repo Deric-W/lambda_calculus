@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Implementation of the Lambda calculus"""
 
 from .terms import Abstraction, Application, Variable

@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Visitor for walking terms"""
 
 from __future__ import annotations

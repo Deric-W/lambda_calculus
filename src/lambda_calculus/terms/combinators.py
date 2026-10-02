@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Common combinators"""
 
 from typing import Final

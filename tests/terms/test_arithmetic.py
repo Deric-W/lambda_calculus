@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Tests for arithmetic terms"""
 
 from unittest import TestCase

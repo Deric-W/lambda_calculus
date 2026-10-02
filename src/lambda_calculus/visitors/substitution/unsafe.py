@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Substitutions which dont check if the substitutions are valid"""
 
 from __future__ import annotations

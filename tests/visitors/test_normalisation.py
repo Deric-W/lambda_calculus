@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Tests for term normalisation"""
 
 from unittest import TestCase

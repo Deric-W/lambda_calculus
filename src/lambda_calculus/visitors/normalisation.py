@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Visitor for term normalisation"""
 
 from __future__ import annotations

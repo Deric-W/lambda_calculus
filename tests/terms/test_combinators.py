@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Tests for combinator terms"""
 
 from unittest import TestCase
