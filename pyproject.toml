@@ -48,16 +48,17 @@ config-path = ".ruff_defaults.toml"
 installer = "pip"
 config-path = ".ruff_defaults.toml"
 
-[tool.hatch.envs.lint]
-dependencies = [
-    "mypy >= 1.0.0"
+[tool.hatch.envs.hatch-check-types]
+installer = "pip"
+# do not override inherited test dependencies
+extra-dependencies = [
+    "mypy ~= 2.4"
 ]
 
-[tool.hatch.envs.lint.scripts]
-typecheck = "mypy -p lambda_calculus"
-release = [
-    "typecheck"
-]
+[tool.hatch.envs.hatch-check-types.scripts]
+check = "mypy -p lambda_calculus --cache-dir \"{root}/.mypy_cache\" --pretty {args}"
+check-summarize = "mypy -p lambda_calculus --cache-dir \"{root}/.mypy_cache\" {args}"
+coverage = "mypy -p lambda_calculus --cache-dir \"{root}/.mypy_cache\" --linecoverage-report \"{root}/.mypy_reports\" {args}"
 
 [tool.hatch.envs.docs]
 dependencies = [

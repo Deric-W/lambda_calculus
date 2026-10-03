@@ -22,10 +22,16 @@ jobs:
         cache: pip
 
     - name: Install Hatch
-      run: python -m pip install "hatch >= 1.10.0"
-    
-    - name: Perform release check
-      run: hatch run lint:release
+      run: python -m pip install "hatch ~= 1.17.0"
+
+    - name: Perform code checks
+      run: hatch check code --sync
+
+    - name: Perform formatting checks
+      run: hatch check fmt --sync
+
+    - name: Perform type checks
+      run: hatch check types
 
     - name: Run tests
       run: hatch test --all --cover-quiet --verbose
