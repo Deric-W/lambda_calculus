@@ -36,10 +36,10 @@ class CheckedSubstitution(Substitution[V]):
     bound_variables: dict[V, int]
 
     __slots__ = (
-        "variable",
-        "value",
+        "bound_variables",
         "free_variables",
-        "bound_variables"
+        "value",
+        "variable"
     )
 
     def __init__(self, variable: V, value: terms.Term[V], free_variables: AbstractSet[V]) -> None:

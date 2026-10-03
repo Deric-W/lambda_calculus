@@ -28,8 +28,8 @@ class UnsafeSubstitution(DeferrableSubstitution[V]):
     value: terms.Term[V]
 
     __slots__ = (
-        "variable",
-        "value"
+        "value",
+        "variable"
     )
 
     def __init__(self, variable: V, value: terms.Term[V]) -> None:

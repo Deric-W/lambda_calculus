@@ -29,8 +29,8 @@ class RenamingSubstitution(DeferrableSubstitution[V]):
     value: terms.Term[V]
 
     __slots__ = (
-        "variable",
-        "value"
+        "value",
+        "variable"
     )
 
     @abstractmethod
