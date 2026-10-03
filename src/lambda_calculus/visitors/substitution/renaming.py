@@ -1,22 +1,19 @@
-#!/usr/bin/python3
-
 """Substitutions performing automatic alpha conversion"""
 
 from __future__ import annotations
+
 from abc import abstractmethod
-from collections.abc import Set, Generator
-from itertools import count, filterfalse
+from collections.abc import Generator
+from collections.abc import Set as AbstractSet
+from itertools import count
 from typing import TypeVar, final
+
+from ... import terms
+from .. import Visitor
 from . import DeferrableSubstitution
 from .unsafe import UnsafeSubstitution
-from .. import Visitor
-from ... import terms
 
-__all__ = (
-    "RenamingSubstitution",
-    "TracingDecorator",
-    "CountingSubstitution"
-)
+__all__ = ("CountingSubstitution", "RenamingSubstitution", "TracingDecorator")
 
 V = TypeVar("V")
 
@@ -31,10 +28,7 @@ class RenamingSubstitution(DeferrableSubstitution[V]):
 
     value: terms.Term[V]
 
-    __slots__ = (
-        "variable",
-        "value"
-    )
+    __slots__ = ("value", "variable")
 
     @abstractmethod
     def prevent_collision(self, abstraction: terms.Abstraction[V]) -> terms.Abstraction[V]:
@@ -44,7 +38,7 @@ class RenamingSubstitution(DeferrableSubstitution[V]):
         :param abstraction: abstraction term which could bind free variables
         :return: abstraction term which does not bind free variables
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @final
     def trace(self) -> TracingDecorator[V]:
@@ -68,7 +62,9 @@ class RenamingSubstitution(DeferrableSubstitution[V]):
         return self.value
 
     @final
-    def defer_abstraction(self, abstraction: terms.Abstraction[V]) -> tuple[terms.Abstraction[V], RenamingSubstitution[V] | None]:
+    def defer_abstraction(
+        self, abstraction: terms.Abstraction[V]
+    ) -> tuple[terms.Abstraction[V], RenamingSubstitution[V] | None]:
         """
         Visit an Abstraction term.
 
@@ -81,7 +77,9 @@ class RenamingSubstitution(DeferrableSubstitution[V]):
         return self.prevent_collision(abstraction), self
 
     @final
-    def defer_application(self, application: terms.Application[V]) -> tuple[terms.Application[V], RenamingSubstitution[V], RenamingSubstitution[V]]:
+    def defer_application(
+        self, application: terms.Application[V]
+    ) -> tuple[terms.Application[V], RenamingSubstitution[V], RenamingSubstitution[V]]:
         """
         Visit an Application term.
 
@@ -108,7 +106,9 @@ class TracingDecorator(Visitor[Generator["terms.Term[V]", None, "terms.Term[V]"]
     def __init__(self, substitution: RenamingSubstitution[V]) -> None:
         self.substitution = substitution
 
-    def visit_variable(self, variable: terms.Variable[V]) -> Generator[terms.Variable[V], None, terms.Term[V]]:
+    def visit_variable(
+        self, variable: terms.Variable[V]
+    ) -> Generator[terms.Variable[V], None, terms.Term[V]]:
         """
         Visit a Variable term.
 
@@ -120,7 +120,9 @@ class TracingDecorator(Visitor[Generator["terms.Term[V]", None, "terms.Term[V]"]
         # to create a generator
         yield variable  # type: ignore[unreachable]
 
-    def visit_abstraction(self, abstraction: terms.Abstraction[V]) -> Generator[terms.Abstraction[V], None, terms.Abstraction[V]]:
+    def visit_abstraction(
+        self, abstraction: terms.Abstraction[V]
+    ) -> Generator[terms.Abstraction[V], None, terms.Abstraction[V]]:
         """
         Visit an Abstraction term
 
@@ -134,10 +136,12 @@ class TracingDecorator(Visitor[Generator["terms.Term[V]", None, "terms.Term[V]"]
         elif substituted.bound != abstraction.bound:
             yield substituted
         conversions = substituted.body.accept(self)
-        body = yield from map(lambda b: terms.Abstraction(substituted.bound, b), conversions)
+        body = yield from map(lambda b: terms.Abstraction(substituted.bound, b), conversions)  # noqa: C417
         return terms.Abstraction(substituted.bound, body)
 
-    def visit_application(self, application: terms.Application[V]) -> Generator[terms.Application[V], None, terms.Application[V]]:
+    def visit_application(
+        self, application: terms.Application[V]
+    ) -> Generator[terms.Application[V], None, terms.Application[V]]:
         """
         Visit an Application term
 
@@ -158,7 +162,7 @@ class TracingDecorator(Visitor[Generator["terms.Term[V]", None, "terms.Term[V]"]
             else:
                 yield terms.Application(step, application.argument)
         conversions = application.argument.accept(self)
-        argument = yield from map(lambda a: terms.Application(step, a), conversions)
+        argument = yield from map(lambda a: terms.Application(step, a), conversions)  # noqa: C417
         return terms.Application(abstraction, argument)
 
 
@@ -173,11 +177,13 @@ class CountingSubstitution(RenamingSubstitution[str]):
     :param free_variables: free variables which should not be bound
     """
 
-    free_variables: Set[str]
+    free_variables: AbstractSet[str]
 
     __slots__ = ("free_variables",)
 
-    def __init__(self, variable: str, value: terms.Term[str], free_variables: Set[str]) -> None:
+    def __init__(
+        self, variable: str, value: terms.Term[str], free_variables: AbstractSet[str]
+    ) -> None:
         self.variable = variable
         self.value = value
         self.free_variables = free_variables
@@ -201,19 +207,19 @@ class CountingSubstitution(RenamingSubstitution[str]):
         :return: abstraction term which does not bind free variables
         """
         if abstraction.bound in self.free_variables:
-            used_variables = abstraction.body.bound_variables() \
-                | abstraction.free_variables() \
+            used_variables = (
+                abstraction.body.bound_variables()
+                | abstraction.free_variables()
                 | self.free_variables
-            candidates = map(lambda i: f"{abstraction.bound}{i}", count(1))
-            variable = next(filterfalse(lambda v: v in used_variables, candidates))
+            )
+            candidates = (f"{abstraction.bound}{i}" for i in count(1))
+            variable = next(v for v in candidates if v not in used_variables)
             return terms.Abstraction(
                 variable,
                 abstraction.body.accept(
                     UnsafeSubstitution.from_substitution(
-                        abstraction.bound,
-                        terms.Variable(variable)
+                        abstraction.bound, terms.Variable(variable)
                     )
-                )
+                ),
             )
-        else:
-            return abstraction
+        return abstraction

@@ -1,13 +1,13 @@
-#!/usr/bin/python3
-
 """Predefined Variables for all ASCII letters"""
 
 from string import ascii_letters
+
 from . import Variable
 
 __all__ = tuple(ascii_letters)
 
 # better IDE autocompletion
+# ruff: noqa: E741
 a, b, c, d, e, f, g, h, i, j = map(Variable, "abcdefghij")
 k, l, m, n, o, p, q, r, s, t = map(Variable, "klmnopqrst")
 u, v, w, x, y, z = map(Variable, "uvwxyz")

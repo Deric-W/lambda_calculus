@@ -1,19 +1,16 @@
-#!/usr/bin/python3
-
 """Visitor for term normalisation"""
 
 from __future__ import annotations
-from collections.abc import Iterator
+
+from collections.abc import Generator, Iterator
 from enum import Enum, unique
-from typing import TypeVar, final, Generator, TypeAlias
+from typing import TypeAlias, TypeVar, final
+
 from .. import terms
 from . import Visitor
 from .substitution.renaming import CountingSubstitution
 
-__all__ = (
-    "Conversion",
-    "BetaNormalisingVisitor",
-)
+__all__ = ("BetaNormalisingVisitor", "Conversion")
 
 V = TypeVar("V")
 
@@ -25,6 +22,7 @@ class Conversion(Enum):
     """
     Conversion performed by normalisation
     """
+
     ALPHA = 0
     BETA = 1
 
@@ -55,7 +53,7 @@ class BetaNormalisingVisitor(Visitor[Iterator[Step], str]):
             result = intermediate
         return result
 
-    def visit_variable(self, variable: terms.Variable[str]) -> Iterator[Step]:
+    def visit_variable(self, variable: terms.Variable[str]) -> Iterator[Step]:  # noqa: ARG002
         """
         Visit a Variable term.
 
@@ -72,9 +70,13 @@ class BetaNormalisingVisitor(Visitor[Iterator[Step], str]):
         :return: Iterator yielding steps performed on its body
         """
         results = abstraction.body.accept(self)
-        return map(lambda s: (s[0], terms.Abstraction(abstraction.bound, s[1])), results)
+        return (
+            (conversion, terms.Abstraction(abstraction.bound, term)) for conversion, term in results
+        )
 
-    def beta_reducation(self, abstraction: terms.Abstraction[str], argument: terms.Term[str]) -> Generator[Step, None, terms.Term[str]]:
+    def beta_reducation(
+        self, abstraction: terms.Abstraction[str], argument: terms.Term[str]
+    ) -> Generator[Step, None, terms.Term[str]]:
         """
         Perform beta reduction of an application.
 
@@ -83,15 +85,15 @@ class BetaNormalisingVisitor(Visitor[Iterator[Step], str]):
         :return: Generator yielding steps and returning the reduced term
         """
         conversions = CountingSubstitution.from_substitution(abstraction.bound, argument).trace()
-        reduced = yield from map(
+        reduced = yield from map(  # noqa: C417
             lambda body: (
                 Conversion.ALPHA,
-                terms.Application(terms.Abstraction(abstraction.bound, body), argument)
+                terms.Application(terms.Abstraction(abstraction.bound, body), argument),
             ),
-            abstraction.body.accept(conversions)    # type: ignore
+            abstraction.body.accept(conversions),  # type: ignore
         )
         yield (Conversion.BETA, reduced)
-        return reduced      # type: ignore
+        return reduced  # type: ignore
 
     def visit_application(self, application: terms.Application[str]) -> Iterator[Step]:
         """
@@ -119,5 +121,5 @@ class BetaNormalisingVisitor(Visitor[Iterator[Step], str]):
                 else:
                     abstraction = transformation
             # no redex, continue with argument
-            transformations = application.argument.accept(self)
-            yield from map(lambda s: (s[0], terms.Application(abstraction, s[1])), transformations)
+            for conversion, term in application.argument.accept(self):
+                yield (conversion, terms.Application(abstraction, term))

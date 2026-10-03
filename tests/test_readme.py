@@ -1,11 +1,13 @@
-#!/usr/bin/python3
-
 """Tests for README examples"""
 
+from typing import TYPE_CHECKING
 from unittest import TestCase
-from lambda_calculus import Variable, Abstraction, Application
-from lambda_calculus.terms import Term
+
+from lambda_calculus import Abstraction, Application, Variable
 from lambda_calculus.visitors.normalisation import BetaNormalisingVisitor
+
+if TYPE_CHECKING:
+    from lambda_calculus.terms import Term
 
 
 class ExampleTest(TestCase):
@@ -51,20 +53,19 @@ class ExampleTest(TestCase):
         """test method chaining example"""
         x = Variable.with_valid_name("x")
         y = Variable.with_valid_name("y")
-        term = Variable("+") \
-            .apply_to(x, y) \
-            .abstract("x", "y") \
-            .apply_to(y, Variable("3")) \
-            .abstract("y") \
+        term = (
+            Variable("+")
+            .apply_to(x, y)
+            .abstract("x", "y")
+            .apply_to(y, Variable("3"))
+            .abstract("y")
             .apply_to(Variable("4"))
+        )
         self.assertEqual(term, self.term)
 
     def test_evaluation(self) -> None:
         """test evaluation example"""
         self.assertEqual(
             BetaNormalisingVisitor().skip_intermediate(self.term),
-            Application.with_arguments(
-                Variable("+"),
-                (Variable("4"), Variable("3"))
-            )
+            Application.with_arguments(Variable("+"), (Variable("4"), Variable("3"))),
         )

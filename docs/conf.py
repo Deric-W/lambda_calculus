@@ -1,11 +1,9 @@
-#!/usr/bin/env python3
-
 """Sphinx configuration"""
 
-import sys
 import os.path
-from sphinx_pyproject import SphinxConfig
+import sys
 
+from sphinx_pyproject import SphinxConfig
 
 sys.path.append(os.path.abspath(".."))
 

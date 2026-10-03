@@ -1,11 +1,10 @@
-#!/usr/bin/python3
-
 """Tests for pair terms"""
 
 from unittest import TestCase
+
+from lambda_calculus.terms import Application, Term, Variable, pairs
+from lambda_calculus.terms.logic import FALSE, TRUE
 from lambda_calculus.visitors.normalisation import BetaNormalisingVisitor
-from lambda_calculus.terms import Term, Variable, Application, pairs
-from lambda_calculus.terms.logic import TRUE, FALSE
 
 
 class PairTest(TestCase):
@@ -25,40 +24,26 @@ class PairTest(TestCase):
         """test accessing the first element"""
         self.assertEqual(
             self.visitor.skip_intermediate(
-                Application(
-                    pairs.FIRST,
-                    self.make_pair(Variable("a"), Variable("b"))
-                )
+                Application(pairs.FIRST, self.make_pair(Variable("a"), Variable("b")))
             ),
-            Variable("a")
+            Variable("a"),
         )
 
     def test_second(self) -> None:
         """test accessing rhe second element"""
         self.assertEqual(
             self.visitor.skip_intermediate(
-                Application(
-                    pairs.SECOND,
-                    self.make_pair(Variable("a"), Variable("b"))
-                )
+                Application(pairs.SECOND, self.make_pair(Variable("a"), Variable("b")))
             ),
-            Variable("b")
+            Variable("b"),
         )
 
     def test_null(self) -> None:
         """test check for NIL pair"""
+        self.assertEqual(self.visitor.skip_intermediate(Application(pairs.NULL, pairs.NIL)), TRUE)
         self.assertEqual(
             self.visitor.skip_intermediate(
-                Application(pairs.NULL, pairs.NIL)
+                Application(pairs.NULL, self.make_pair(Variable("a"), Variable("b")))
             ),
-            TRUE
-        )
-        self.assertEqual(
-            self.visitor.skip_intermediate(
-                Application(
-                    pairs.NULL,
-                    self.make_pair(Variable("a"), Variable("b"))
-                )
-            ),
-            FALSE
+            FALSE,
         )

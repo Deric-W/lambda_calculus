@@ -1,19 +1,19 @@
-#!/usr/bin/python3
-
 """Visitors for performing operations on Terms"""
 
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import TypeVar, Generic, final
+from typing import Generic, TypeVar, final
+
 from .. import terms
 
 __all__ = (
-    "Visitor",
     "BottomUpVisitor",
     "DeferrableVisitor",
-    "substitution",
+    "Visitor",
     "normalisation",
-    "walking"
+    "substitution",
+    "walking",
 )
 
 T = TypeVar("T")
@@ -52,7 +52,7 @@ class Visitor(ABC, Generic[T, V]):
         :param variable: variable term to visit
         :return: value as required by its type variable
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abstractmethod
     def visit_abstraction(self, abstraction: terms.Abstraction[V]) -> T:
@@ -64,7 +64,7 @@ class Visitor(ABC, Generic[T, V]):
         :param abstraction: abstraction term to visit
         :return: value as required by its type variable
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abstractmethod
     def visit_application(self, application: terms.Application[V]) -> T:
@@ -76,7 +76,7 @@ class Visitor(ABC, Generic[T, V]):
         :param appliation: application term to visit
         :return: value as required by its type variable
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 class BottomUpVisitor(Visitor[T, V]):
@@ -98,10 +98,7 @@ class BottomUpVisitor(Visitor[T, V]):
         :param abstraction: abstraction term to visit
         :return: value returned by :meth:`ascend_abstraction`
         """
-        return self.ascend_abstraction(
-            abstraction,
-            abstraction.body.accept(self)
-        )
+        return self.ascend_abstraction(abstraction, abstraction.body.accept(self))
 
     @final
     def visit_application(self, application: terms.Application[V]) -> T:
@@ -115,9 +112,7 @@ class BottomUpVisitor(Visitor[T, V]):
         :return: value returned by :meth:`ascend_application`
         """
         return self.ascend_application(
-            application,
-            application.abstraction.accept(self),
-            application.argument.accept(self)
+            application, application.abstraction.accept(self), application.argument.accept(self)
         )
 
     @abstractmethod
@@ -129,10 +124,12 @@ class BottomUpVisitor(Visitor[T, V]):
         :param body: value produced by visiting its body
         :return: value as required by its type variable
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abstractmethod
-    def ascend_application(self, application: terms.Application[V], abstraction: T, argument: T) -> T:
+    def ascend_application(
+        self, application: terms.Application[V], abstraction: T, argument: T
+    ) -> T:
         """
         Visit an Application term after visiting its abstraction and argument.
 
@@ -141,7 +138,7 @@ class BottomUpVisitor(Visitor[T, V]):
         :param argument: value produced by visiting its argument
         :return: value as required by its type variable
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 class DeferrableVisitor(Visitor[T, V]):
@@ -152,7 +149,9 @@ class DeferrableVisitor(Visitor[T, V]):
     __slots__ = ()
 
     @abstractmethod
-    def defer_abstraction(self, abstraction: terms.Abstraction[V]) -> tuple[T, DeferrableVisitor[T, V] | None]:
+    def defer_abstraction(
+        self, abstraction: terms.Abstraction[V]
+    ) -> tuple[T, DeferrableVisitor[T, V] | None]:
         """
         Visit an Abstraction term.
 
@@ -160,10 +159,12 @@ class DeferrableVisitor(Visitor[T, V]):
         :return: tuple containing a value as required by its type variable
                  and a visitor to be used for visiting its body
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abstractmethod
-    def defer_application(self, application: terms.Application[V]) -> tuple[T, DeferrableVisitor[T, V] | None, DeferrableVisitor[T, V] | None]:
+    def defer_application(
+        self, application: terms.Application[V]
+    ) -> tuple[T, DeferrableVisitor[T, V] | None, DeferrableVisitor[T, V] | None]:
         """
         Visit an Application term.
 
@@ -171,4 +172,4 @@ class DeferrableVisitor(Visitor[T, V]):
         :return: tuple containing a value as required by its type variable
                  and visitors to be used for visiting its abstraction and argument
         """
-        raise NotImplementedError()
+        raise NotImplementedError

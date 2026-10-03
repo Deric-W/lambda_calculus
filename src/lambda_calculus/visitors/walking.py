@@ -1,16 +1,14 @@
-#!/usr/bin/python3
-
 """Visitor for walking terms"""
 
 from __future__ import annotations
+
 from collections.abc import Iterator
 from typing import TypeVar, final
+
 from .. import terms
 from . import BottomUpVisitor
 
-__all__ = (
-    "DepthFirstVisitor",
-)
+__all__ = ("DepthFirstVisitor",)
 
 V = TypeVar("V")
 
@@ -37,9 +35,7 @@ class DepthFirstVisitor(BottomUpVisitor[Iterator["terms.Term[V]"], V]):
         yield variable
 
     def ascend_abstraction(
-        self,
-        abstraction: terms.Abstraction[V],
-        body: Iterator[terms.Term[V]]
+        self, abstraction: terms.Abstraction[V], body: Iterator[terms.Term[V]]
     ) -> Iterator[terms.Term[V]]:
         """
         Visit an Abstraction term after visiting its body.
@@ -55,7 +51,7 @@ class DepthFirstVisitor(BottomUpVisitor[Iterator["terms.Term[V]"], V]):
         self,
         application: terms.Application[V],
         abstraction: Iterator[terms.Term[V]],
-        argument: Iterator[terms.Term[V]]
+        argument: Iterator[terms.Term[V]],
     ) -> Iterator[terms.Term[V]]:
         """
         Visit an Application term after visiting its abstraction and argument.

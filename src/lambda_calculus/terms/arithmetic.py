@@ -1,21 +1,11 @@
-#!/usr/bin/python3
-
 """Implementations of natural numbers and arithmetic operators"""
 
 from typing import Final
-from . import Term, Variable, Abstraction, Application
-from .logic import TRUE, FALSE
 
-__all__ = (
-    "ISZERO",
-    "SUCCESSOR",
-    "PREDECESSOR",
-    "ADD",
-    "SUBTRACT",
-    "MULTIPLY",
-    "POWER",
-    "number"
-)
+from . import Abstraction, Application, Term, Variable
+from .logic import FALSE, TRUE
+
+__all__ = ("ADD", "ISZERO", "MULTIPLY", "POWER", "PREDECESSOR", "SUBTRACT", "SUCCESSOR", "number")
 
 ISZERO: Final = Variable("n").apply_to(FALSE.abstract("x"), TRUE).abstract("n")
 """
@@ -26,12 +16,8 @@ if its argument is zero, :const:`lambda_calculus.terms.logic.FALSE` otherwise
 SUCCESSOR: Final = Abstraction.curried(
     ("n", "f", "x"),
     Application(
-        Variable("f"),
-        Application.with_arguments(
-            Variable("n"),
-            (Variable("f"), Variable("x"))
-        )
-    )
+        Variable("f"), Application.with_arguments(Variable("n"), (Variable("f"), Variable("x")))
+    ),
 )
 """
 Term evaluating to its argument incremented by one.
@@ -43,19 +29,12 @@ PREDECESSOR: Final = Abstraction.curried(
         Variable("n"),
         (
             Abstraction.curried(
-                ("g", "h"),
-                Application(
-                    Variable("h"),
-                    Application(
-                        Variable("g"),
-                        Variable("f")
-                    )
-                )
+                ("g", "h"), Application(Variable("h"), Application(Variable("g"), Variable("f")))
             ),
             Abstraction("u", Variable("x")),
             Abstraction("u", Variable("u")),
-        )
-    )
+        ),
+    ),
 )
 """
 Term ealuating to its argument decremented by one.
@@ -65,51 +44,28 @@ ADD: Final = Abstraction.curried(
     ("m", "n", "f", "x"),
     Application.with_arguments(
         Variable("m"),
-        (
-            Variable("f"),
-            Application.with_arguments(
-                Variable("n"),
-                (Variable("f"), Variable("x"))
-            )
-        )
-    )
+        (Variable("f"), Application.with_arguments(Variable("n"), (Variable("f"), Variable("x")))),
+    ),
 )
 """
 Term evaluating to the sum of its two arguments.
 """
 
 SUBTRACT: Final = Abstraction.curried(
-    ("m", "n"),
-    Application.with_arguments(
-        Variable("n"),
-        (PREDECESSOR, Variable("m"))
-    )
+    ("m", "n"), Application.with_arguments(Variable("n"), (PREDECESSOR, Variable("m")))
 )
 """
 Term evaluating to the difference of its two arguments.
 """
 
 MULTIPLY: Final = Abstraction.curried(
-    ("m", "n", "f"),
-    Application(
-        Variable("m"),
-        Application(
-            Variable("n"),
-            Variable("f")
-        )
-    )
+    ("m", "n", "f"), Application(Variable("m"), Application(Variable("n"), Variable("f")))
 )
 """
 Term evaluating to the product of its two arguments.
 """
 
-POWER: Final = Abstraction.curried(
-    ("b", "e"),
-    Application(
-        Variable("e"),
-        Variable("b")
-    )
-)
+POWER: Final = Abstraction.curried(("b", "e"), Application(Variable("e"), Variable("b")))
 """
 Term evaluating to its first argument to the power of its second argument.
 """
@@ -124,12 +80,10 @@ def number(n: int) -> Abstraction[str]:
     :return: requested term
     """
     if n < 0:
-        raise ValueError("number is not natural")
+        msg = "number is not natural"
+        raise ValueError(msg)
     f = Variable("f")
     body: Term[str] = Variable("x")
     for _ in range(n):
         body = Application(f, body)
-    return Abstraction.curried(
-        ("f", "x"),
-        body
-    )
+    return Abstraction.curried(("f", "x"), body)

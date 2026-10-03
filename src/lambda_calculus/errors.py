@@ -1,14 +1,11 @@
-#!/usr/bin/python3
-
 """Errors raised by Term operations"""
 
 from __future__ import annotations
-from collections.abc import Collection
-from typing import TypeVar, Generic
 
-__all__ = (
-    "CollisionError",
-)
+from collections.abc import Collection
+from typing import Generic, TypeVar
+
+__all__ = ("CollisionError",)
 
 V = TypeVar("V")
 

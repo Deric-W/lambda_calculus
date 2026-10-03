@@ -1,15 +1,13 @@
-#!/usr/bin/python3
-
 """Substitutions which dont check if the substitutions are valid"""
 
 from __future__ import annotations
+
 from typing import TypeVar, final
+
 from ... import terms
 from . import DeferrableSubstitution
 
-__all__ = (
-    "UnsafeSubstitution",
-)
+__all__ = ("UnsafeSubstitution",)
 
 V = TypeVar("V")
 
@@ -27,10 +25,7 @@ class UnsafeSubstitution(DeferrableSubstitution[V]):
 
     value: terms.Term[V]
 
-    __slots__ = (
-        "variable",
-        "value"
-    )
+    __slots__ = ("value", "variable")
 
     def __init__(self, variable: V, value: terms.Term[V]) -> None:
         self.variable = variable
@@ -58,7 +53,9 @@ class UnsafeSubstitution(DeferrableSubstitution[V]):
             return variable
         return self.value
 
-    def defer_abstraction(self, abstraction: terms.Abstraction[V]) -> tuple[terms.Abstraction[V], UnsafeSubstitution[V] | None]:
+    def defer_abstraction(
+        self, abstraction: terms.Abstraction[V]
+    ) -> tuple[terms.Abstraction[V], UnsafeSubstitution[V] | None]:
         """
         Visit an Abstraction term.
 
@@ -70,7 +67,9 @@ class UnsafeSubstitution(DeferrableSubstitution[V]):
             return abstraction, None
         return abstraction, self
 
-    def defer_application(self, application: terms.Application[V]) -> tuple[terms.Application[V], UnsafeSubstitution[V], UnsafeSubstitution[V]]:
+    def defer_application(
+        self, application: terms.Application[V]
+    ) -> tuple[terms.Application[V], UnsafeSubstitution[V], UnsafeSubstitution[V]]:
         """
         Visit an Application term.
 

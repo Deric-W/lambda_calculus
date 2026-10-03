@@ -22,16 +22,19 @@ jobs:
         cache: pip
 
     - name: Install Hatch
-      run: python -m pip install "hatch >= 1.10.0"
-    
-    - name: Perform release check
-      run: hatch run lint:release
+      run: python -m pip install "hatch ~= 1.17.0"
 
-    - name: Run tests
-      run: hatch test --all --cover-quiet --verbose
+    - name: Perform code checks
+      run: hatch check code --sync
 
-    - name: Generate report
-      run: hatch env run -e hatch-test.py3.13 coverage xml
+    - name: Perform formatting checks
+      run: hatch check fmt --sync
+
+    - name: Perform type checks
+      run: hatch check types
+
+    - name: Run tests and generate coverage report
+      run: hatch test --all --cover-quiet --cover-xml --verbose
 
     - name: Upload coverage
       uses: codecov/codecov-action@v7

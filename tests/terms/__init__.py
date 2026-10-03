@@ -1,9 +1,8 @@
-#!/usr/bin/python3
-
 """Tests for the Term implementations"""
 
 from unittest import TestCase
-from lambda_calculus import Variable, Abstraction, Application
+
+from lambda_calculus import Abstraction, Application, Variable
 from lambda_calculus.errors import CollisionError
 
 
@@ -57,17 +56,14 @@ class AbstractionTest(TestCase):
         """test curried representation"""
         self.assertEqual(
             Abstraction.curried((1, 2, 3), Variable(3)),
-            Abstraction(1, Abstraction(2, Abstraction(3, Variable(3))))
+            Abstraction(1, Abstraction(2, Abstraction(3, Variable(3)))),
         )
         with self.assertRaises(ValueError):
             Abstraction.curried([], Variable(3))
 
     def test_str(self) -> None:
         """test string representation"""
-        self.assertEqual(
-            str(Abstraction(4, Variable(4))),
-            "(λ4.4)"
-        )
+        self.assertEqual(str(Abstraction(4, Variable(4))), "(λ4.4)")
 
     def test_free_variables(self) -> None:
         """test free variables"""
@@ -93,41 +89,57 @@ class AbstractionTest(TestCase):
     def test_alpha_conversion(self) -> None:
         """test alpha conversion"""
         self.assertEqual(
-            Abstraction(1, Variable(1)).alpha_conversion(1),
-            Abstraction(1, Variable(1))
+            Abstraction(1, Variable(1)).alpha_conversion(1), Abstraction(1, Variable(1))
         )
         self.assertEqual(
             Abstraction(1, Abstraction(1, Variable(1))).alpha_conversion(2),
-            Abstraction(2, Abstraction(1, Variable(1)))
+            Abstraction(2, Abstraction(1, Variable(1))),
         )
         self.assertEqual(
-            Abstraction(1, Abstraction(2, Application(Variable(1), Variable(2)))).alpha_conversion(3),
-            Abstraction(3, Abstraction(2, Application(Variable(3), Variable(2))))
+            Abstraction(1, Abstraction(2, Application(Variable(1), Variable(2)))).alpha_conversion(
+                3
+            ),
+            Abstraction(3, Abstraction(2, Application(Variable(3), Variable(2)))),
         )
         self.assertEqual(
-            Abstraction(1, Application(Abstraction(2, Application(Variable(3), Variable(4))), Variable(1))).alpha_conversion(2),
-            Abstraction(2, Application(Abstraction(2, Application(Variable(3), Variable(4))), Variable(2)))
+            Abstraction(
+                1, Application(Abstraction(2, Application(Variable(3), Variable(4))), Variable(1))
+            ).alpha_conversion(2),
+            Abstraction(
+                2, Application(Abstraction(2, Application(Variable(3), Variable(4))), Variable(2))
+            ),
         )
         self.assertEqual(
-            Abstraction(1, Application(Abstraction(2, Application(Variable(3), Variable(2))), Variable(1))).alpha_conversion(2),
-            Abstraction(2, Application(Abstraction(2, Application(Variable(3), Variable(2))), Variable(2)))
+            Abstraction(
+                1, Application(Abstraction(2, Application(Variable(3), Variable(2))), Variable(1))
+            ).alpha_conversion(2),
+            Abstraction(
+                2, Application(Abstraction(2, Application(Variable(3), Variable(2))), Variable(2))
+            ),
         )
         self.assertEqual(
-            Abstraction(1, Application(Abstraction(1, Application(Variable(3), Variable(1))), Variable(1))).alpha_conversion(2),
-            Abstraction(2, Application(Abstraction(1, Application(Variable(3), Variable(1))), Variable(2)))
+            Abstraction(
+                1, Application(Abstraction(1, Application(Variable(3), Variable(1))), Variable(1))
+            ).alpha_conversion(2),
+            Abstraction(
+                2, Application(Abstraction(1, Application(Variable(3), Variable(1))), Variable(2))
+            ),
         )
         with self.assertRaises(CollisionError):
-            Abstraction(1, Abstraction(2, Application(Variable(1), Variable(2)))).alpha_conversion(2)
+            Abstraction(1, Abstraction(2, Application(Variable(1), Variable(2)))).alpha_conversion(
+                2
+            )
         with self.assertRaises(CollisionError):
-            Abstraction(1, Abstraction(2, Application(Abstraction(2, Variable(2)), Variable(1)))).alpha_conversion(2)
+            Abstraction(
+                1, Abstraction(2, Application(Abstraction(2, Variable(2)), Variable(1)))
+            ).alpha_conversion(2)
         with self.assertRaises(CollisionError):
             Abstraction(1, Variable(2)).alpha_conversion(2)
 
     def test_eta_reduction(self) -> None:
         """test eta reduction"""
         self.assertEqual(
-            Abstraction(1, Application(Variable(2), Variable(1))).eta_reduction(),
-            Variable(2)
+            Abstraction(1, Application(Variable(2), Variable(1))).eta_reduction(), Variable(2)
         )
         with self.assertRaises(ValueError):
             Abstraction(1, Variable(1)).eta_reduction()
@@ -139,12 +151,10 @@ class AbstractionTest(TestCase):
     def test_replace(self) -> None:
         """test partial attribute replacement"""
         self.assertEqual(
-            Abstraction(1, Variable(1)).replace(bound=42),
-            Abstraction(42, Variable(1))
+            Abstraction(1, Variable(1)).replace(bound=42), Abstraction(42, Variable(1))
         )
         self.assertEqual(
-            Abstraction(1, Variable(1)).replace(body=Variable(42)),
-            Abstraction(1, Variable(42))
+            Abstraction(1, Variable(1)).replace(body=Variable(42)), Abstraction(1, Variable(42))
         )
 
 
@@ -156,29 +166,34 @@ class ApplicationTest(TestCase):
         combinator = Abstraction(1, Variable(1))
         self.assertEqual(
             Application.with_arguments(Abstraction(2, combinator), (Variable(3), Variable(4))),
-            Application(Application(Abstraction(2, combinator), Variable(3)), Variable(4))
+            Application(Application(Abstraction(2, combinator), Variable(3)), Variable(4)),
         )
         with self.assertRaises(ValueError):
             Application.with_arguments(Abstraction(2, combinator), [])
 
     def test_str(self) -> None:
         """test string representation"""
-        self.assertEqual(
-            str(Application(Variable(1), Variable(2))),
-            "(1 2)"
-        )
+        self.assertEqual(str(Application(Variable(1), Variable(2))), "(1 2)")
 
     def test_free_variables(self) -> None:
         """test free variables"""
         self.assertEqual(Application(Variable(1), Variable(2)).free_variables(), {1, 2})
         self.assertEqual(Application(Variable(1), Variable(1)).free_variables(), {1})
-        self.assertEqual(Application(Abstraction(1, Variable(1)), Variable(2)).free_variables(), {2})
-        self.assertEqual(Application(Abstraction(1, Variable(1)), Abstraction(2, Variable(2))).free_variables(), set())
+        self.assertEqual(
+            Application(Abstraction(1, Variable(1)), Variable(2)).free_variables(), {2}
+        )
+        self.assertEqual(
+            Application(Abstraction(1, Variable(1)), Abstraction(2, Variable(2))).free_variables(),
+            set(),
+        )
 
     def test_bound_variables(self) -> None:
         """test bound variables"""
         self.assertEqual(Application(Variable(1), Variable(2)).bound_variables(), set())
-        self.assertEqual(Application(Abstraction(1, Variable(1)), Abstraction(2, Variable(2))).bound_variables(), {1, 2})
+        self.assertEqual(
+            Application(Abstraction(1, Variable(1)), Abstraction(2, Variable(2))).bound_variables(),
+            {1, 2},
+        )
 
     def test_is_beta_normal_form(self) -> None:
         """test beta normal form detection"""
@@ -186,21 +201,23 @@ class ApplicationTest(TestCase):
         self.assertTrue(Application(Variable(1), Variable(2)).is_beta_normal_form())
         self.assertTrue(Application(Variable(3), combinator).is_beta_normal_form())
         self.assertFalse(Application(combinator, Variable(3)).is_beta_normal_form())
-        self.assertFalse(Application(Variable(1), Application(combinator, Variable(3))).is_beta_normal_form())
+        self.assertFalse(
+            Application(Variable(1), Application(combinator, Variable(3))).is_beta_normal_form()
+        )
 
     def test_beta_reduction(self) -> None:
         """test beta reduction"""
         self.assertEqual(
             Application(Abstraction(1, Abstraction(2, Variable(1))), Variable(3)).beta_reduction(),
-            Abstraction(2, Variable(3))
+            Abstraction(2, Variable(3)),
         )
         self.assertEqual(
             Application(Abstraction(1, Abstraction(1, Variable(1))), Variable(3)).beta_reduction(),
-            Abstraction(1, Variable(1))
+            Abstraction(1, Variable(1)),
         )
         self.assertEqual(
             Application(Abstraction(1, Abstraction(2, Variable(3))), Variable(2)).beta_reduction(),
-            Abstraction(2, Variable(3))
+            Abstraction(2, Variable(3)),
         )
         with self.assertRaises(ValueError):
             Application(Variable(1), Variable(2)).beta_reduction()
@@ -211,9 +228,9 @@ class ApplicationTest(TestCase):
         """test partial attribute replacement"""
         self.assertEqual(
             Application(Variable(1), Variable(2)).replace(abstraction=Variable(42)),
-            Application(Variable(42), Variable(2))
+            Application(Variable(42), Variable(2)),
         )
         self.assertEqual(
             Application(Variable(1), Variable(2)).replace(argument=Variable(42)),
-            Application(Variable(1), Variable(42))
+            Application(Variable(1), Variable(42)),
         )

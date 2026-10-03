@@ -1,27 +1,27 @@
-#!/usr/bin/python3
-
 """Lambda Terms"""
 
 from __future__ import annotations
+
 from abc import abstractmethod
-from collections.abc import Sequence, Set, Iterable, Iterator
+from collections.abc import Iterable, Iterator, Sequence
+from collections.abc import Set as AbstractSet
 from dataclasses import dataclass
 from typing import TypeVar, final
-from .. import visitors
+
 from ..errors import CollisionError
-from ..visitors import walking
+from ..visitors import Visitor, walking
 from ..visitors.substitution import checked
 
 __all__ = (
-    "Term",
-    "Variable",
     "Abstraction",
     "Application",
+    "Term",
+    "Variable",
     "abc",
     "arithmetic",
+    "combinators",
     "logic",
     "pairs",
-    "combinators"
 )
 
 T = TypeVar("T")
@@ -52,25 +52,25 @@ class Term(Iterable["Term[V]"]):
 
         :return: lambda term string
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abstractmethod
-    def free_variables(self) -> Set[V]:
+    def free_variables(self) -> AbstractSet[V]:
         """
         Calculate the free variables of this Term.
 
         :return: variables not bound by an abstraction
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abstractmethod
-    def bound_variables(self) -> Set[V]:
+    def bound_variables(self) -> AbstractSet[V]:
         """
         Calculate the bound variables of this Term.
 
         :return: variables bound by an abstraction
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abstractmethod
     def is_beta_normal_form(self) -> bool:
@@ -79,17 +79,17 @@ class Term(Iterable["Term[V]"]):
 
         :return: if no beta reductions can be performed
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abstractmethod
-    def accept(self, visitor: visitors.Visitor[T, V]) -> T:
+    def accept(self, visitor: Visitor[T, V]) -> T:
         """
         Accept a visitor by calling his corresponding method.
 
         :param visitor: Visitor to accept
         :return: value returned by the visitors corresponding method
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def abstract(self, *variables: V) -> Abstraction[V]:
         """
@@ -151,10 +151,12 @@ class Variable(Term[V]):
         """
         string = str(name)
         if not string:
-            raise ValueError("empty string representation")
+            msg = "empty string representation"
+            raise ValueError(msg)
         for character in string:
             if character in "().λ" or character.isspace():
-                raise ValueError(f"invalid character: '{character}'")
+                msg = f"invalid character: '{character}'"
+                raise ValueError(msg)
         return cls(name)
 
     def __str__(self) -> str:
@@ -165,7 +167,7 @@ class Variable(Term[V]):
         """
         return str(self.name)
 
-    def free_variables(self) -> Set[V]:
+    def free_variables(self) -> AbstractSet[V]:
         """
         Calculate the free variables of this Term.
 
@@ -173,7 +175,7 @@ class Variable(Term[V]):
         """
         return {self.name}
 
-    def bound_variables(self) -> Set[V]:
+    def bound_variables(self) -> AbstractSet[V]:
         """
         Calculate the bound variables of this Term.
 
@@ -189,7 +191,7 @@ class Variable(Term[V]):
         """
         return True
 
-    def accept(self, visitor: visitors.Visitor[T, V]) -> T:
+    def accept(self, visitor: Visitor[T, V]) -> T:
         """
         Accept a visitor by calling visitors.Visitor.visit_variable.
 
@@ -230,7 +232,8 @@ class Abstraction(Term[V]):
                     term = cls(variable, term)
                 return term
             case _:
-                raise ValueError("no variables to bind")
+                msg = "no variables to bind"
+                raise ValueError(msg)
 
     def __str__(self) -> str:
         """
@@ -240,7 +243,7 @@ class Abstraction(Term[V]):
         """
         return f"(λ{self.bound}.{self.body})"
 
-    def free_variables(self) -> Set[V]:
+    def free_variables(self) -> AbstractSet[V]:
         """
         Calculate the free variables of this Term.
 
@@ -248,7 +251,7 @@ class Abstraction(Term[V]):
         """
         return self.body.free_variables() - {self.bound}
 
-    def bound_variables(self) -> Set[V]:
+    def bound_variables(self) -> AbstractSet[V]:
         """
         Calculate the free variables of this Term.
 
@@ -274,12 +277,10 @@ class Abstraction(Term[V]):
         """
         if new == self.bound:
             return self
-        elif new not in self.body.free_variables():
-            return Abstraction(
-                new,
-                self.body.substitute(self.bound, Variable(new))
-            )
-        raise CollisionError("new variable would bind free variable in body", (new,))
+        if new not in self.body.free_variables():
+            return Abstraction(new, self.body.substitute(self.bound, Variable(new)))
+        msg = "new variable would bind free variable in body"
+        raise CollisionError(msg, (new,))
 
     def eta_reduction(self) -> Term[V]:
         """
@@ -292,9 +293,10 @@ class Abstraction(Term[V]):
             case Application(f, Variable(x)) if x == self.bound and x not in f.free_variables():
                 return f
             case _:
-                raise ValueError("abstraction is not useless")
+                msg = "abstraction is not useless"
+                raise ValueError(msg)
 
-    def accept(self, visitor: visitors.Visitor[T, V]) -> T:
+    def accept(self, visitor: Visitor[T, V]) -> T:
         """
         Accept a visitor by calling visitors.Visitor.visit_abstraction.
 
@@ -312,8 +314,7 @@ class Abstraction(Term[V]):
         :return: new term
         """
         return Abstraction(
-            self.bound if bound is None else bound,
-            self.body if body is None else body
+            self.bound if bound is None else bound, self.body if body is None else body
         )
 
 
@@ -348,7 +349,8 @@ class Application(Term[V]):
                     term = cls(term, argument)
                 return term
             case _:
-                raise ValueError("no arguments to apply abstraction to")
+                msg = "no arguments to apply abstraction to"
+                raise ValueError(msg)
 
     def __str__(self) -> str:
         """
@@ -358,7 +360,7 @@ class Application(Term[V]):
         """
         return f"({self.abstraction} {self.argument})"
 
-    def free_variables(self) -> Set[V]:
+    def free_variables(self) -> AbstractSet[V]:
         """
         Calculate the free variables of this Term.
 
@@ -366,7 +368,7 @@ class Application(Term[V]):
         """
         return self.abstraction.free_variables() | self.argument.free_variables()
 
-    def bound_variables(self) -> Set[V]:
+    def bound_variables(self) -> AbstractSet[V]:
         """
         Calculate the free variables of this Term.
 
@@ -388,9 +390,11 @@ class Application(Term[V]):
 
         :return: if no beta reductions can be performed
         """
-        return not self.is_redex() \
-            and self.abstraction.is_beta_normal_form() \
+        return (
+            not self.is_redex()
+            and self.abstraction.is_beta_normal_form()
             and self.argument.is_beta_normal_form()
+        )
 
     def beta_reduction(self) -> Term[V]:
         """
@@ -403,9 +407,10 @@ class Application(Term[V]):
             case Abstraction(bound, body):
                 return body.substitute(bound, self.argument)
             case _:
-                raise ValueError("can not perform reduction without known Abstraction")
+                msg = "can not perform reduction without known Abstraction"
+                raise ValueError(msg)
 
-    def accept(self, visitor: visitors.Visitor[T, V]) -> T:
+    def accept(self, visitor: Visitor[T, V]) -> T:
         """
         Accept a visitor by calling visitors.Visitor.visit_application.
 
@@ -414,7 +419,9 @@ class Application(Term[V]):
         """
         return visitor.visit_application(self)
 
-    def replace(self, *, abstraction: Term[V] | None = None, argument: Term[V] | None = None) -> Application[V]:
+    def replace(
+        self, *, abstraction: Term[V] | None = None, argument: Term[V] | None = None
+    ) -> Application[V]:
         """
         Return a copy with specific attributes replaced.
 
@@ -424,5 +431,5 @@ class Application(Term[V]):
         """
         return Application(
             self.abstraction if abstraction is None else abstraction,
-            self.argument if argument is None else argument
+            self.argument if argument is None else argument,
         )
