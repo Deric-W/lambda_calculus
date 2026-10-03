@@ -24,7 +24,7 @@ class LogicTest(TestCase):
             (logic.FALSE, logic.TRUE),
             (logic.TRUE, logic.TRUE)
         )
-        return zip(inputs, outputs)
+        return zip(inputs, outputs, strict=True)
 
     def test_and(self) -> None:
         """test logical and"""

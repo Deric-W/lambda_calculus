@@ -280,7 +280,7 @@ class Abstraction(Term[V]):
         """
         if new == self.bound:
             return self
-        elif new not in self.body.free_variables():
+        if new not in self.body.free_variables():
             return Abstraction(
                 new,
                 self.body.substitute(self.bound, Variable(new))

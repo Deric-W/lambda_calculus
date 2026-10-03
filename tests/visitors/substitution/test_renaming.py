@@ -76,7 +76,7 @@ class TracingDecoratorTest(TestCase):
         """create a visitor"""
         self.visitor = renaming.CountingSubstitution.from_substitution("a", Variable("x")).trace()
 
-    def assertGenerator(self, generator: Generator[object, None, object], outputs: Iterable[object], result: object) -> None:
+    def assertGenerator(self, generator: Generator[object, None, object], outputs: Iterable[object], result: object) -> None:  # noqa: N802
         """assert that a generator produces the correct output and result"""
         outputs = iter(outputs)
         for number in count(start=1):

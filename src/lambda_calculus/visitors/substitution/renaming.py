@@ -214,5 +214,4 @@ class CountingSubstitution(RenamingSubstitution[str]):
                     )
                 )
             )
-        else:
-            return abstraction
+        return abstraction

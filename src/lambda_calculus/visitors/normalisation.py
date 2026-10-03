@@ -52,7 +52,7 @@ class BetaNormalisingVisitor(Visitor[Iterator[Step], str]):
             result = intermediate
         return result
 
-    def visit_variable(self, variable: terms.Variable[str]) -> Iterator[Step]:
+    def visit_variable(self, variable: terms.Variable[str]) -> Iterator[Step]:  # noqa: ARG002
         """
         Visit a Variable term.
 
