@@ -5,7 +5,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from collections.abc import Generator
 from collections.abc import Set as AbstractSet
-from itertools import count, filterfalse
+from itertools import count
 from typing import TypeVar, final
 
 from ... import terms
@@ -131,7 +131,7 @@ class TracingDecorator(Visitor[Generator["terms.Term[V]", None, "terms.Term[V]"]
         elif substituted.bound != abstraction.bound:
             yield substituted
         conversions = substituted.body.accept(self)
-        body = yield from map(lambda b: terms.Abstraction(substituted.bound, b), conversions)
+        body = yield from map(lambda b: terms.Abstraction(substituted.bound, b), conversions)  # noqa: C417
         return terms.Abstraction(substituted.bound, body)
 
     def visit_application(self, application: terms.Application[V]) -> Generator[terms.Application[V], None, terms.Application[V]]:
@@ -155,7 +155,7 @@ class TracingDecorator(Visitor[Generator["terms.Term[V]", None, "terms.Term[V]"]
             else:
                 yield terms.Application(step, application.argument)
         conversions = application.argument.accept(self)
-        argument = yield from map(lambda a: terms.Application(step, a), conversions)
+        argument = yield from map(lambda a: terms.Application(step, a), conversions)  # noqa: C417
         return terms.Application(abstraction, argument)
 
 
@@ -203,8 +203,8 @@ class CountingSubstitution(RenamingSubstitution[str]):
             used_variables = abstraction.body.bound_variables() \
                 | abstraction.free_variables() \
                 | self.free_variables
-            candidates = map(lambda i: f"{abstraction.bound}{i}", count(1))
-            variable = next(filterfalse(lambda v: v in used_variables, candidates))
+            candidates = (f"{abstraction.bound}{i}" for i in count(1))
+            variable = next(v for v in candidates if v not in used_variables)
             return terms.Abstraction(
                 variable,
                 abstraction.body.accept(

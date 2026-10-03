@@ -69,7 +69,7 @@ class BetaNormalisingVisitor(Visitor[Iterator[Step], str]):
         :return: Iterator yielding steps performed on its body
         """
         results = abstraction.body.accept(self)
-        return map(lambda s: (s[0], terms.Abstraction(abstraction.bound, s[1])), results)
+        return ((conversion, terms.Abstraction(abstraction.bound, term)) for conversion, term in results)
 
     def beta_reducation(self, abstraction: terms.Abstraction[str], argument: terms.Term[str]) -> Generator[Step, None, terms.Term[str]]:
         """
@@ -80,7 +80,7 @@ class BetaNormalisingVisitor(Visitor[Iterator[Step], str]):
         :return: Generator yielding steps and returning the reduced term
         """
         conversions = CountingSubstitution.from_substitution(abstraction.bound, argument).trace()
-        reduced = yield from map(
+        reduced = yield from map(  # noqa: C417
             lambda body: (
                 Conversion.ALPHA,
                 terms.Application(terms.Abstraction(abstraction.bound, body), argument)
@@ -116,5 +116,5 @@ class BetaNormalisingVisitor(Visitor[Iterator[Step], str]):
                 else:
                     abstraction = transformation
             # no redex, continue with argument
-            transformations = application.argument.accept(self)
-            yield from map(lambda s: (s[0], terms.Application(abstraction, s[1])), transformations)
+            for conversion, term in application.argument.accept(self):
+                yield (conversion, terms.Application(abstraction, term))
