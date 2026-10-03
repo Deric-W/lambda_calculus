@@ -3,10 +3,9 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Generic, TypeVar, final
+from typing import Generic, TypeVar, final
 
-if TYPE_CHECKING:
-    from .. import terms
+from .. import terms
 
 __all__ = (
     "BottomUpVisitor",

@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generic, TypeVar
-
-if TYPE_CHECKING:
-    from collections.abc import Collection
+from collections.abc import Collection
+from typing import Generic, TypeVar
 
 __all__ = ("CollisionError",)
 

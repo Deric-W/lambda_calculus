@@ -2,14 +2,12 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, TypeVar, final
+from collections.abc import Set as AbstractSet
+from typing import TypeVar, final
 
 from ... import terms
 from ...errors import CollisionError
 from . import Substitution
-
-if TYPE_CHECKING:
-    from collections.abc import Set as AbstractSet
 
 __all__ = ("CheckedSubstitution",)
 

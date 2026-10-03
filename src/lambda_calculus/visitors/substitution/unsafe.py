@@ -2,12 +2,10 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, TypeVar, final
+from typing import TypeVar, final
 
+from ... import terms
 from . import DeferrableSubstitution
-
-if TYPE_CHECKING:
-    from ... import terms
 
 __all__ = ("UnsafeSubstitution",)
 

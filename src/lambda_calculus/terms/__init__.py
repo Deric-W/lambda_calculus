@@ -6,14 +6,11 @@ from abc import abstractmethod
 from collections.abc import Iterable, Iterator, Sequence
 from collections.abc import Set as AbstractSet
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, TypeVar, final
+from typing import TypeVar, final
 
 from ..errors import CollisionError
-from ..visitors import walking
+from ..visitors import Visitor, walking
 from ..visitors.substitution import checked
-
-if TYPE_CHECKING:
-    from .. import visitors
 
 __all__ = (
     "Abstraction",
@@ -85,7 +82,7 @@ class Term(Iterable["Term[V]"]):
         raise NotImplementedError
 
     @abstractmethod
-    def accept(self, visitor: visitors.Visitor[T, V]) -> T:
+    def accept(self, visitor: Visitor[T, V]) -> T:
         """
         Accept a visitor by calling his corresponding method.
 
@@ -194,7 +191,7 @@ class Variable(Term[V]):
         """
         return True
 
-    def accept(self, visitor: visitors.Visitor[T, V]) -> T:
+    def accept(self, visitor: Visitor[T, V]) -> T:
         """
         Accept a visitor by calling visitors.Visitor.visit_variable.
 
@@ -299,7 +296,7 @@ class Abstraction(Term[V]):
                 msg = "abstraction is not useless"
                 raise ValueError(msg)
 
-    def accept(self, visitor: visitors.Visitor[T, V]) -> T:
+    def accept(self, visitor: Visitor[T, V]) -> T:
         """
         Accept a visitor by calling visitors.Visitor.visit_abstraction.
 
@@ -413,7 +410,7 @@ class Application(Term[V]):
                 msg = "can not perform reduction without known Abstraction"
                 raise ValueError(msg)
 
-    def accept(self, visitor: visitors.Visitor[T, V]) -> T:
+    def accept(self, visitor: Visitor[T, V]) -> T:
         """
         Accept a visitor by calling visitors.Visitor.visit_application.
 

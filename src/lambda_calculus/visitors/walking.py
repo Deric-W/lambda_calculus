@@ -3,12 +3,10 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
-from typing import TYPE_CHECKING, TypeVar, final
+from typing import TypeVar, final
 
+from .. import terms
 from . import BottomUpVisitor
-
-if TYPE_CHECKING:
-    from .. import terms
 
 __all__ = ("DepthFirstVisitor",)
 
