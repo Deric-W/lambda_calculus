@@ -14,7 +14,7 @@ __all__ = (
     "Visitor",
     "normalisation",
     "substitution",
-    "walking"
+    "walking",
 )
 
 T = TypeVar("T")
@@ -99,10 +99,7 @@ class BottomUpVisitor(Visitor[T, V]):
         :param abstraction: abstraction term to visit
         :return: value returned by :meth:`ascend_abstraction`
         """
-        return self.ascend_abstraction(
-            abstraction,
-            abstraction.body.accept(self)
-        )
+        return self.ascend_abstraction(abstraction, abstraction.body.accept(self))
 
     @final
     def visit_application(self, application: terms.Application[V]) -> T:
@@ -116,9 +113,7 @@ class BottomUpVisitor(Visitor[T, V]):
         :return: value returned by :meth:`ascend_application`
         """
         return self.ascend_application(
-            application,
-            application.abstraction.accept(self),
-            application.argument.accept(self)
+            application, application.abstraction.accept(self), application.argument.accept(self)
         )
 
     @abstractmethod
@@ -133,7 +128,9 @@ class BottomUpVisitor(Visitor[T, V]):
         raise NotImplementedError
 
     @abstractmethod
-    def ascend_application(self, application: terms.Application[V], abstraction: T, argument: T) -> T:
+    def ascend_application(
+        self, application: terms.Application[V], abstraction: T, argument: T
+    ) -> T:
         """
         Visit an Application term after visiting its abstraction and argument.
 
@@ -153,7 +150,9 @@ class DeferrableVisitor(Visitor[T, V]):
     __slots__ = ()
 
     @abstractmethod
-    def defer_abstraction(self, abstraction: terms.Abstraction[V]) -> tuple[T, DeferrableVisitor[T, V] | None]:
+    def defer_abstraction(
+        self, abstraction: terms.Abstraction[V]
+    ) -> tuple[T, DeferrableVisitor[T, V] | None]:
         """
         Visit an Abstraction term.
 
@@ -164,7 +163,9 @@ class DeferrableVisitor(Visitor[T, V]):
         raise NotImplementedError
 
     @abstractmethod
-    def defer_application(self, application: terms.Application[V]) -> tuple[T, DeferrableVisitor[T, V] | None, DeferrableVisitor[T, V] | None]:
+    def defer_application(
+        self, application: terms.Application[V]
+    ) -> tuple[T, DeferrableVisitor[T, V] | None, DeferrableVisitor[T, V] | None]:
         """
         Visit an Application term.
 

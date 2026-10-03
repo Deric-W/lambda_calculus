@@ -22,6 +22,7 @@ class Conversion(Enum):
     """
     Conversion performed by normalisation
     """
+
     ALPHA = 0
     BETA = 1
 
@@ -69,9 +70,13 @@ class BetaNormalisingVisitor(Visitor[Iterator[Step], str]):
         :return: Iterator yielding steps performed on its body
         """
         results = abstraction.body.accept(self)
-        return ((conversion, terms.Abstraction(abstraction.bound, term)) for conversion, term in results)
+        return (
+            (conversion, terms.Abstraction(abstraction.bound, term)) for conversion, term in results
+        )
 
-    def beta_reducation(self, abstraction: terms.Abstraction[str], argument: terms.Term[str]) -> Generator[Step, None, terms.Term[str]]:
+    def beta_reducation(
+        self, abstraction: terms.Abstraction[str], argument: terms.Term[str]
+    ) -> Generator[Step, None, terms.Term[str]]:
         """
         Perform beta reduction of an application.
 
@@ -83,12 +88,12 @@ class BetaNormalisingVisitor(Visitor[Iterator[Step], str]):
         reduced = yield from map(  # noqa: C417
             lambda body: (
                 Conversion.ALPHA,
-                terms.Application(terms.Abstraction(abstraction.bound, body), argument)
+                terms.Application(terms.Abstraction(abstraction.bound, body), argument),
             ),
-            abstraction.body.accept(conversions)    # type: ignore
+            abstraction.body.accept(conversions),  # type: ignore
         )
         yield (Conversion.BETA, reduced)
-        return reduced      # type: ignore
+        return reduced  # type: ignore
 
     def visit_application(self, application: terms.Application[str]) -> Iterator[Step]:
         """

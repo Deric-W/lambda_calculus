@@ -19,51 +19,33 @@ class CountingSubstitutionTest(TestCase):
 
     def test_location(self) -> None:
         """test if the right variables get substituted"""
+        self.assertEqual(Variable("b").accept(self.visitor), Variable("b"))
+        self.assertEqual(Variable("a").accept(self.visitor), Variable("x"))
         self.assertEqual(
-            Variable("b").accept(self.visitor),
-            Variable("b")
-        )
-        self.assertEqual(
-            Variable("a").accept(self.visitor),
-            Variable("x")
-        )
-        self.assertEqual(
-            Application(
-                Abstraction("a", Variable("a")),
-                Abstraction("b", Variable("a"))
-            ).accept(self.visitor),
-            Application(Abstraction("a", Variable("a")), Abstraction("b", Variable("x")))
+            Application(Abstraction("a", Variable("a")), Abstraction("b", Variable("a"))).accept(
+                self.visitor
+            ),
+            Application(Abstraction("a", Variable("a")), Abstraction("b", Variable("x"))),
         )
 
     def test_renaming(self) -> None:
         """test if colliding bound variables get renamed"""
         self.assertEqual(
-            Abstraction("x", Variable("a")).accept(self.visitor),
-            Abstraction("x1", Variable("x"))
+            Abstraction("x", Variable("a")).accept(self.visitor), Abstraction("x1", Variable("x"))
         )
         self.assertEqual(
             Abstraction("x", Abstraction("x1", Variable("a"))).accept(self.visitor),
-            Abstraction("x2", Abstraction("x1", Variable("x")))
+            Abstraction("x2", Abstraction("x1", Variable("x"))),
         )
         self.assertEqual(
             Abstraction("x", Application(Variable("a"), Variable("x1"))).accept(self.visitor),
-            Abstraction("x2", Application(Variable("x"), Variable("x1")))
+            Abstraction("x2", Application(Variable("x"), Variable("x1"))),
         )
         self.assertEqual(
-            Abstraction(
-                "x",
-                Application(
-                    Abstraction("x", Variable("x")),
-                    Variable("a")
-                )
-            ).accept(self.visitor),
-            Abstraction(
-                "x1",
-                Application(
-                    Abstraction("x1", Variable("x1")),
-                    Variable("x")
-                )
-            )
+            Abstraction("x", Application(Abstraction("x", Variable("x")), Variable("a"))).accept(
+                self.visitor
+            ),
+            Abstraction("x1", Application(Abstraction("x1", Variable("x1")), Variable("x"))),
         )
 
 
@@ -76,7 +58,9 @@ class TracingDecoratorTest(TestCase):
         """create a visitor"""
         self.visitor = renaming.CountingSubstitution.from_substitution("a", Variable("x")).trace()
 
-    def assertGenerator(self, generator: Generator[object, None, object], outputs: Iterable[object], result: object) -> None:  # noqa: N802
+    def assertGenerator(  # noqa: N802
+        self, generator: Generator[object, None, object], outputs: Iterable[object], result: object
+    ) -> None:
         """assert that a generator produces the correct output and result"""
         outputs = iter(outputs)
         for number in count(start=1):
@@ -96,89 +80,57 @@ class TracingDecoratorTest(TestCase):
     def test_empty(self) -> None:
         """test behavior when substituting not existing variable"""
         term = Variable("x").abstract("z").apply_to(Variable("b"))
-        self.assertGenerator(
-            self.visitor.visit(term),
-            (),
-            term
-        )
+        self.assertGenerator(self.visitor.visit(term), (), term)
 
     def test_variable(self) -> None:
         """test visiting a variable term"""
-        self.assertGenerator(
-            self.visitor.visit(Variable("b")),
-            (),
-            Variable("b")
-        )
-        self.assertGenerator(
-            self.visitor.visit(Variable("a")),
-            (),
-            Variable("x")
-        )
+        self.assertGenerator(self.visitor.visit(Variable("b")), (), Variable("b"))
+        self.assertGenerator(self.visitor.visit(Variable("a")), (), Variable("x"))
 
     def test_abstraction(self) -> None:
         """test visiting an abstraction term"""
         term = Variable("b").abstract("c")
-        self.assertGenerator(
-            self.visitor.visit(term),
-            (),
-            term
-        )
+        self.assertGenerator(self.visitor.visit(term), (), term)
         term = Variable("a").abstract("c")
-        self.assertGenerator(
-            self.visitor.visit(term),
-            (),
-            Variable("x").abstract("c")
-        )
+        self.assertGenerator(self.visitor.visit(term), (), Variable("x").abstract("c"))
         term = Variable("a").apply_to(Variable("x")).abstract("x").abstract("x")
         self.assertGenerator(
             self.visitor.visit(term),
             (
                 Variable("a").apply_to(Variable("x")).abstract("x").abstract("x1"),
-                Variable("a").apply_to(Variable("x1")).abstract("x1").abstract("x1")
+                Variable("a").apply_to(Variable("x1")).abstract("x1").abstract("x1"),
             ),
-            Variable("x").apply_to(Variable("x1")).abstract("x1").abstract("x1")
+            Variable("x").apply_to(Variable("x1")).abstract("x1").abstract("x1"),
         )
         term = Variable("a").abstract("a")
-        self.assertGenerator(
-            self.visitor.visit(term),
-            (),
-            term
-        )
+        self.assertGenerator(self.visitor.visit(term), (), term)
 
     def test_application(self) -> None:
         """test visiting an application term"""
         term = Variable("b").apply_to(Variable("c"))
-        self.assertGenerator(
-            self.visitor.visit(term),
-            (),
-            term
-        )
+        self.assertGenerator(self.visitor.visit(term), (), term)
         term = Variable("a").apply_to(Variable("b"))
-        self.assertGenerator(
-            self.visitor.visit(term),
-            (),
-            Variable("x").apply_to(Variable("b"))
-        )
+        self.assertGenerator(self.visitor.visit(term), (), Variable("x").apply_to(Variable("b")))
         term = Variable("a").abstract("a").apply_to(Variable("a"))
         self.assertGenerator(
-            self.visitor.visit(term),
-            (),
-            Variable("a").abstract("a").apply_to(Variable("x"))
+            self.visitor.visit(term), (), Variable("a").abstract("a").apply_to(Variable("x"))
         )
-        term = Variable("a") \
-                .apply_to(Variable("x")) \
-                .abstract("x") \
-                .apply_to(Variable("a").abstract("a"))
+        term = (
+            Variable("a")
+            .apply_to(Variable("x"))
+            .abstract("x")
+            .apply_to(Variable("a").abstract("a"))
+        )
         self.assertGenerator(
             self.visitor.visit(term),
             (
                 Variable("a")
-                    .apply_to(Variable("x1"))
-                    .abstract("x1")
-                    .apply_to(Variable("a").abstract("a")),
-            ),
-            Variable("x")
                 .apply_to(Variable("x1"))
                 .abstract("x1")
-                .apply_to(Variable("a").abstract("a"))
+                .apply_to(Variable("a").abstract("a")),
+            ),
+            Variable("x")
+            .apply_to(Variable("x1"))
+            .abstract("x1")
+            .apply_to(Variable("a").abstract("a")),
         )

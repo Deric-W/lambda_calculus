@@ -27,10 +27,7 @@ class UnsafeSubstitution(DeferrableSubstitution[V]):
 
     value: terms.Term[V]
 
-    __slots__ = (
-        "value",
-        "variable"
-    )
+    __slots__ = ("value", "variable")
 
     def __init__(self, variable: V, value: terms.Term[V]) -> None:
         self.variable = variable
@@ -58,7 +55,9 @@ class UnsafeSubstitution(DeferrableSubstitution[V]):
             return variable
         return self.value
 
-    def defer_abstraction(self, abstraction: terms.Abstraction[V]) -> tuple[terms.Abstraction[V], UnsafeSubstitution[V] | None]:
+    def defer_abstraction(
+        self, abstraction: terms.Abstraction[V]
+    ) -> tuple[terms.Abstraction[V], UnsafeSubstitution[V] | None]:
         """
         Visit an Abstraction term.
 
@@ -70,7 +69,9 @@ class UnsafeSubstitution(DeferrableSubstitution[V]):
             return abstraction, None
         return abstraction, self
 
-    def defer_application(self, application: terms.Application[V]) -> tuple[terms.Application[V], UnsafeSubstitution[V], UnsafeSubstitution[V]]:
+    def defer_application(
+        self, application: terms.Application[V]
+    ) -> tuple[terms.Application[V], UnsafeSubstitution[V], UnsafeSubstitution[V]]:
         """
         Visit an Application term.
 

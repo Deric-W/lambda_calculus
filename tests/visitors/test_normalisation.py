@@ -20,10 +20,7 @@ class TestBetaNormalisingVisitor(TestCase):
         terms = (
             Variable("a"),
             Abstraction("a", Variable("a")),
-            Application(
-                Variable("a"),
-                Abstraction("a", Variable("a"))
-            )
+            Application(Variable("a"), Abstraction("a", Variable("a"))),
         )
         for term in terms:
             self.assertEqual(list(term.accept(self.visitor)), [])
@@ -41,85 +38,57 @@ class TestBetaNormalisingVisitor(TestCase):
         steps.append(
             (
                 normalisation.Conversion.BETA,
-                steps[-1][1].replace(abstraction=steps[0][1].abstraction.beta_reduction())
+                steps[-1][1].replace(abstraction=steps[0][1].abstraction.beta_reduction()),
             )
         )
-        steps.append(
-            (
-                normalisation.Conversion.BETA,
-                steps[-1][1].beta_reduction()
-            )
-        )
-        self.assertEqual(
-            list(term.accept(self.visitor)),
-            steps
-        )
+        steps.append((normalisation.Conversion.BETA, steps[-1][1].beta_reduction()))
+        self.assertEqual(list(term.accept(self.visitor)), steps)
         self.assertTrue(steps[-1][1].is_beta_normal_form())
 
     def test_order(self) -> None:
         """test that normal order is maintained"""
-        triple = Abstraction(
-            "w",
-            Application.with_arguments(
-                Variable("w"),
-                [Variable("w")] * 2
-            )
-        )
+        triple = Abstraction("w", Application.with_arguments(Variable("w"), [Variable("w")] * 2))
         self.assertEqual(
             list(
                 Application(
-                    Application(
-                        Abstraction("a", Variable("a")),
-                        Abstraction("x", Variable("z"))
-                    ),
-                    Application(
-                        triple,
-                        triple
-                    )
+                    Application(Abstraction("a", Variable("a")), Abstraction("x", Variable("z"))),
+                    Application(triple, triple),
                 ).accept(self.visitor)
             ),
             [
                 (
                     normalisation.Conversion.BETA,
-                    Application(
-                        Abstraction("x", Variable("z")),
-                        Application(
-                            triple,
-                            triple
-                        )
-                    )
+                    Application(Abstraction("x", Variable("z")), Application(triple, triple)),
                 ),
-                (
-                    normalisation.Conversion.BETA,
-                    Variable("z")
-                )
-            ]
+                (normalisation.Conversion.BETA, Variable("z")),
+            ],
         )
 
     def test_collision(self) -> None:
         """test that collisions are renamed"""
         problem = Application(
             Variable("x").apply_to(Variable("x")).abstract("x"),
-            Variable("a").apply_to(Variable("b")).abstract("a", "b")
+            Variable("a").apply_to(Variable("b")).abstract("a", "b"),
         )
         steps = [(normalisation.Conversion.BETA, problem.beta_reduction())]
         steps.append((normalisation.Conversion.BETA, steps[-1][1].beta_reduction()))
         steps.append(
             (
                 normalisation.Conversion.ALPHA,
-                Variable("a").apply_to(Variable("b1")).abstract("a", "b1").apply_to(Variable("b")).abstract("b")
+                Variable("a")
+                .apply_to(Variable("b1"))
+                .abstract("a", "b1")
+                .apply_to(Variable("b"))
+                .abstract("b"),
             )
         )
         steps.append(
             (
                 normalisation.Conversion.BETA,
-                Variable("b").apply_to(Variable("b1")).abstract("b", "b1")
+                Variable("b").apply_to(Variable("b1")).abstract("b", "b1"),
             )
         )
-        self.assertEqual(
-            list(problem.accept(self.visitor)),
-            steps
-        )
+        self.assertEqual(list(problem.accept(self.visitor)), steps)
         self.assertTrue(steps[-1][1].is_beta_normal_form())
 
     def test_no_normal_form(self) -> None:
@@ -136,13 +105,13 @@ class TestBetaNormalisingVisitor(TestCase):
         """test skipping of intermediate results"""
         self.assertEqual(
             self.visitor.skip_intermediate(Abstraction("a", Variable("z"))),
-            Abstraction("a", Variable("z"))
+            Abstraction("a", Variable("z")),
         )
         self.assertEqual(
             self.visitor.skip_intermediate(
                 Application(Abstraction("a", Variable("a")), Variable("z"))
             ),
-            Variable("z")
+            Variable("z"),
         )
 
     def test_self_argument(self) -> None:
@@ -151,7 +120,7 @@ class TestBetaNormalisingVisitor(TestCase):
         term_copy = Variable("a").apply_to(Variable("b")).abstract("a")
         self.assertEqual(
             self.visitor.skip_intermediate(term.apply_to(term)),
-            Variable("b").apply_to(Variable("b"))
+            Variable("b").apply_to(Variable("b")),
         )
         # prevent original for being modified
         self.assertEqual(term, term_copy)

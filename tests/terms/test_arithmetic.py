@@ -18,25 +18,19 @@ class OrderingTest(TestCase):
     def test_iszero(self) -> None:
         """test iszero term"""
         self.assertEqual(
-            self.visitor.skip_intermediate(
-                arithmetic.ISZERO.apply_to(arithmetic.number(0))
-            ),
-            logic.TRUE
+            self.visitor.skip_intermediate(arithmetic.ISZERO.apply_to(arithmetic.number(0))),
+            logic.TRUE,
         )
         self.assertEqual(
-            self.visitor.skip_intermediate(
-                arithmetic.ISZERO.apply_to(arithmetic.number(1))
-            ),
-            logic.FALSE
+            self.visitor.skip_intermediate(arithmetic.ISZERO.apply_to(arithmetic.number(1))),
+            logic.FALSE,
         )
 
     def test_successor(self) -> None:
         """test successor term"""
         self.assertEqual(
-            self.visitor.skip_intermediate(
-                Application(arithmetic.SUCCESSOR, arithmetic.number(8))
-            ),
-            arithmetic.number(9)
+            self.visitor.skip_intermediate(Application(arithmetic.SUCCESSOR, arithmetic.number(8))),
+            arithmetic.number(9),
         )
 
     def test_predecessor(self) -> None:
@@ -45,7 +39,7 @@ class OrderingTest(TestCase):
             self.visitor.skip_intermediate(
                 Application(arithmetic.PREDECESSOR, arithmetic.number(8))
             ),
-            arithmetic.number(7)
+            arithmetic.number(7),
         )
 
     def test_predecessor_zero(self) -> None:
@@ -54,7 +48,7 @@ class OrderingTest(TestCase):
             self.visitor.skip_intermediate(
                 Application(arithmetic.PREDECESSOR, arithmetic.number(0))
             ),
-            arithmetic.number(0)
+            arithmetic.number(0),
         )
 
 
@@ -72,11 +66,10 @@ class CalculationsTest(TestCase):
         self.assertEqual(
             self.visitor.skip_intermediate(
                 Application.with_arguments(
-                    arithmetic.ADD,
-                    (arithmetic.number(3), arithmetic.number(5))
+                    arithmetic.ADD, (arithmetic.number(3), arithmetic.number(5))
                 )
             ),
-            arithmetic.number(8)
+            arithmetic.number(8),
         )
 
     def test_subtract(self) -> None:
@@ -84,11 +77,10 @@ class CalculationsTest(TestCase):
         self.assertEqual(
             self.visitor.skip_intermediate(
                 Application.with_arguments(
-                    arithmetic.SUBTRACT,
-                    (arithmetic.number(10), arithmetic.number(3))
+                    arithmetic.SUBTRACT, (arithmetic.number(10), arithmetic.number(3))
                 )
             ),
-            arithmetic.number(7)
+            arithmetic.number(7),
         )
 
     def test_subtract_greater(self) -> None:
@@ -96,11 +88,10 @@ class CalculationsTest(TestCase):
         self.assertEqual(
             self.visitor.skip_intermediate(
                 Application.with_arguments(
-                    arithmetic.SUBTRACT,
-                    (arithmetic.number(10), arithmetic.number(13))
+                    arithmetic.SUBTRACT, (arithmetic.number(10), arithmetic.number(13))
                 )
             ),
-            arithmetic.number(0)
+            arithmetic.number(0),
         )
 
     def test_multiply(self) -> None:
@@ -108,11 +99,10 @@ class CalculationsTest(TestCase):
         self.assertEqual(
             self.visitor.skip_intermediate(
                 Application.with_arguments(
-                    arithmetic.MULTIPLY,
-                    (arithmetic.number(5), arithmetic.number(2))
+                    arithmetic.MULTIPLY, (arithmetic.number(5), arithmetic.number(2))
                 )
             ),
-            arithmetic.number(10)
+            arithmetic.number(10),
         )
 
     def test_power(self) -> None:
@@ -124,30 +114,25 @@ class CalculationsTest(TestCase):
         self.assertEqual(
             self.visitor.skip_intermediate(
                 Application.with_arguments(
-                    arithmetic.POWER,
-                    (arithmetic.number(3), arithmetic.number(2))
+                    arithmetic.POWER, (arithmetic.number(3), arithmetic.number(2))
                 )
             ),
-            nine
+            nine,
         )
 
     def test_power_zero(self) -> None:
         """test power zero"""
         one = self.visitor.skip_intermediate(
             Application.with_arguments(
-                arithmetic.POWER,
-                (arithmetic.number(5), arithmetic.number(0))
+                arithmetic.POWER, (arithmetic.number(5), arithmetic.number(0))
             )
         )
         # eta conversion needed
         self.assertEqual(
             self.visitor.skip_intermediate(
-                Application.with_arguments(
-                    arithmetic.ADD,
-                    (one, arithmetic.number(3))
-                )
+                Application.with_arguments(arithmetic.ADD, (one, arithmetic.number(3)))
             ),
-            arithmetic.number(4)
+            arithmetic.number(4),
         )
         # alpha conversion needed
         zero = arithmetic.number(0)
@@ -156,9 +141,8 @@ class CalculationsTest(TestCase):
         self.assertEqual(
             self.visitor.skip_intermediate(
                 Application.with_arguments(
-                    arithmetic.POWER,
-                    (arithmetic.number(0), arithmetic.number(5))
+                    arithmetic.POWER, (arithmetic.number(0), arithmetic.number(5))
                 )
             ),
-            zero
+            zero,
         )

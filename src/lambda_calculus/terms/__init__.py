@@ -24,7 +24,7 @@ __all__ = (
     "arithmetic",
     "combinators",
     "logic",
-    "pairs"
+    "pairs",
 )
 
 T = TypeVar("T")
@@ -281,10 +281,7 @@ class Abstraction(Term[V]):
         if new == self.bound:
             return self
         if new not in self.body.free_variables():
-            return Abstraction(
-                new,
-                self.body.substitute(self.bound, Variable(new))
-            )
+            return Abstraction(new, self.body.substitute(self.bound, Variable(new)))
         msg = "new variable would bind free variable in body"
         raise CollisionError(msg, (new,))
 
@@ -320,8 +317,7 @@ class Abstraction(Term[V]):
         :return: new term
         """
         return Abstraction(
-            self.bound if bound is None else bound,
-            self.body if body is None else body
+            self.bound if bound is None else bound, self.body if body is None else body
         )
 
 
@@ -397,9 +393,11 @@ class Application(Term[V]):
 
         :return: if no beta reductions can be performed
         """
-        return not self.is_redex() \
-            and self.abstraction.is_beta_normal_form() \
+        return (
+            not self.is_redex()
+            and self.abstraction.is_beta_normal_form()
             and self.argument.is_beta_normal_form()
+        )
 
     def beta_reduction(self) -> Term[V]:
         """
@@ -424,7 +422,9 @@ class Application(Term[V]):
         """
         return visitor.visit_application(self)
 
-    def replace(self, *, abstraction: Term[V] | None = None, argument: Term[V] | None = None) -> Application[V]:
+    def replace(
+        self, *, abstraction: Term[V] | None = None, argument: Term[V] | None = None
+    ) -> Application[V]:
         """
         Return a copy with specific attributes replaced.
 
@@ -434,5 +434,5 @@ class Application(Term[V]):
         """
         return Application(
             self.abstraction if abstraction is None else abstraction,
-            self.argument if argument is None else argument
+            self.argument if argument is None else argument,
         )

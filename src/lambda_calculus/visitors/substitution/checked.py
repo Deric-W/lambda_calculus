@@ -35,12 +35,7 @@ class CheckedSubstitution(Substitution[V]):
 
     bound_variables: dict[V, int]
 
-    __slots__ = (
-        "bound_variables",
-        "free_variables",
-        "value",
-        "variable"
-    )
+    __slots__ = ("bound_variables", "free_variables", "value", "variable")
 
     def __init__(self, variable: V, value: terms.Term[V], free_variables: AbstractSet[V]) -> None:
         self.variable = variable
@@ -116,10 +111,7 @@ class CheckedSubstitution(Substitution[V]):
             return abstraction
         self.bind_variable(abstraction.bound)
         try:
-            return terms.Abstraction(
-                abstraction.bound,
-                abstraction.body.accept(self)
-            )
+            return terms.Abstraction(abstraction.bound, abstraction.body.accept(self))
         finally:
             # allow reuse of this visitor, even on error
             self.unbind_variable(abstraction.bound)
@@ -134,6 +126,5 @@ class CheckedSubstitution(Substitution[V]):
         :return: new term with substitutions performed
         """
         return terms.Application(
-            application.abstraction.accept(self),
-            application.argument.accept(self)
+            application.abstraction.accept(self), application.argument.accept(self)
         )

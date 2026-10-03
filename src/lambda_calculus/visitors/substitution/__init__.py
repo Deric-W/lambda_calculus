@@ -70,7 +70,9 @@ class DeferrableSubstitution(DeferrableVisitor["terms.Term[V]", V], Substitution
     __slots__ = ()
 
     @abstractmethod
-    def defer_abstraction(self, abstraction: terms.Abstraction[V]) -> tuple[terms.Abstraction[V], DeferrableSubstitution[V] | None]:
+    def defer_abstraction(
+        self, abstraction: terms.Abstraction[V]
+    ) -> tuple[terms.Abstraction[V], DeferrableSubstitution[V] | None]:
         """
         Visit an Abstraction term.
 
@@ -81,7 +83,11 @@ class DeferrableSubstitution(DeferrableVisitor["terms.Term[V]", V], Substitution
         raise NotImplementedError
 
     @abstractmethod
-    def defer_application(self, application: terms.Application[V]) -> tuple[terms.Application[V], DeferrableSubstitution[V] | None, DeferrableSubstitution[V] | None]:
+    def defer_application(
+        self, application: terms.Application[V]
+    ) -> tuple[
+        terms.Application[V], DeferrableSubstitution[V] | None, DeferrableSubstitution[V] | None
+    ]:
         """
         Visit an Application term.
 
@@ -104,10 +110,7 @@ class DeferrableSubstitution(DeferrableVisitor["terms.Term[V]", V], Substitution
         substituted, body_visitor = self.defer_abstraction(abstraction)
         if body_visitor is None:
             return substituted
-        return terms.Abstraction(
-            substituted.bound,
-            substituted.body.accept(body_visitor)
-        )
+        return terms.Abstraction(substituted.bound, substituted.body.accept(body_visitor))
 
     @final
     def visit_application(self, application: terms.Application[V]) -> terms.Application[V]:

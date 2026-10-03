@@ -28,10 +28,7 @@ class RenamingSubstitution(DeferrableSubstitution[V]):
 
     value: terms.Term[V]
 
-    __slots__ = (
-        "value",
-        "variable"
-    )
+    __slots__ = ("value", "variable")
 
     @abstractmethod
     def prevent_collision(self, abstraction: terms.Abstraction[V]) -> terms.Abstraction[V]:
@@ -65,7 +62,9 @@ class RenamingSubstitution(DeferrableSubstitution[V]):
         return self.value
 
     @final
-    def defer_abstraction(self, abstraction: terms.Abstraction[V]) -> tuple[terms.Abstraction[V], RenamingSubstitution[V] | None]:
+    def defer_abstraction(
+        self, abstraction: terms.Abstraction[V]
+    ) -> tuple[terms.Abstraction[V], RenamingSubstitution[V] | None]:
         """
         Visit an Abstraction term.
 
@@ -78,7 +77,9 @@ class RenamingSubstitution(DeferrableSubstitution[V]):
         return self.prevent_collision(abstraction), self
 
     @final
-    def defer_application(self, application: terms.Application[V]) -> tuple[terms.Application[V], RenamingSubstitution[V], RenamingSubstitution[V]]:
+    def defer_application(
+        self, application: terms.Application[V]
+    ) -> tuple[terms.Application[V], RenamingSubstitution[V], RenamingSubstitution[V]]:
         """
         Visit an Application term.
 
@@ -105,7 +106,9 @@ class TracingDecorator(Visitor[Generator["terms.Term[V]", None, "terms.Term[V]"]
     def __init__(self, substitution: RenamingSubstitution[V]) -> None:
         self.substitution = substitution
 
-    def visit_variable(self, variable: terms.Variable[V]) -> Generator[terms.Variable[V], None, terms.Term[V]]:
+    def visit_variable(
+        self, variable: terms.Variable[V]
+    ) -> Generator[terms.Variable[V], None, terms.Term[V]]:
         """
         Visit a Variable term.
 
@@ -117,7 +120,9 @@ class TracingDecorator(Visitor[Generator["terms.Term[V]", None, "terms.Term[V]"]
         # to create a generator
         yield variable  # type: ignore[unreachable]
 
-    def visit_abstraction(self, abstraction: terms.Abstraction[V]) -> Generator[terms.Abstraction[V], None, terms.Abstraction[V]]:
+    def visit_abstraction(
+        self, abstraction: terms.Abstraction[V]
+    ) -> Generator[terms.Abstraction[V], None, terms.Abstraction[V]]:
         """
         Visit an Abstraction term
 
@@ -134,7 +139,9 @@ class TracingDecorator(Visitor[Generator["terms.Term[V]", None, "terms.Term[V]"]
         body = yield from map(lambda b: terms.Abstraction(substituted.bound, b), conversions)  # noqa: C417
         return terms.Abstraction(substituted.bound, body)
 
-    def visit_application(self, application: terms.Application[V]) -> Generator[terms.Application[V], None, terms.Application[V]]:
+    def visit_application(
+        self, application: terms.Application[V]
+    ) -> Generator[terms.Application[V], None, terms.Application[V]]:
         """
         Visit an Application term
 
@@ -200,18 +207,19 @@ class CountingSubstitution(RenamingSubstitution[str]):
         :return: abstraction term which does not bind free variables
         """
         if abstraction.bound in self.free_variables:
-            used_variables = abstraction.body.bound_variables() \
-                | abstraction.free_variables() \
+            used_variables = (
+                abstraction.body.bound_variables()
+                | abstraction.free_variables()
                 | self.free_variables
+            )
             candidates = (f"{abstraction.bound}{i}" for i in count(1))
             variable = next(v for v in candidates if v not in used_variables)
             return terms.Abstraction(
                 variable,
                 abstraction.body.accept(
                     UnsafeSubstitution.from_substitution(
-                        abstraction.bound,
-                        terms.Variable(variable)
+                        abstraction.bound, terms.Variable(variable)
                     )
-                )
+                ),
             )
         return abstraction
