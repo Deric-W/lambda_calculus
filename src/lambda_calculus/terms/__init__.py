@@ -55,7 +55,7 @@ class Term(Iterable["Term[V]"]):
 
         :return: lambda term string
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abstractmethod
     def free_variables(self) -> AbstractSet[V]:
@@ -64,7 +64,7 @@ class Term(Iterable["Term[V]"]):
 
         :return: variables not bound by an abstraction
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abstractmethod
     def bound_variables(self) -> AbstractSet[V]:
@@ -73,7 +73,7 @@ class Term(Iterable["Term[V]"]):
 
         :return: variables bound by an abstraction
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abstractmethod
     def is_beta_normal_form(self) -> bool:
@@ -82,7 +82,7 @@ class Term(Iterable["Term[V]"]):
 
         :return: if no beta reductions can be performed
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abstractmethod
     def accept(self, visitor: visitors.Visitor[T, V]) -> T:
@@ -92,7 +92,7 @@ class Term(Iterable["Term[V]"]):
         :param visitor: Visitor to accept
         :return: value returned by the visitors corresponding method
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def abstract(self, *variables: V) -> Abstraction[V]:
         """
@@ -154,10 +154,12 @@ class Variable(Term[V]):
         """
         string = str(name)
         if not string:
-            raise ValueError("empty string representation")
+            msg = "empty string representation"
+            raise ValueError(msg)
         for character in string:
             if character in "().λ" or character.isspace():
-                raise ValueError(f"invalid character: '{character}'")
+                msg = f"invalid character: '{character}'"
+                raise ValueError(msg)
         return cls(name)
 
     def __str__(self) -> str:
@@ -233,7 +235,8 @@ class Abstraction(Term[V]):
                     term = cls(variable, term)
                 return term
             case _:
-                raise ValueError("no variables to bind")
+                msg = "no variables to bind"
+                raise ValueError(msg)
 
     def __str__(self) -> str:
         """
@@ -282,7 +285,8 @@ class Abstraction(Term[V]):
                 new,
                 self.body.substitute(self.bound, Variable(new))
             )
-        raise CollisionError("new variable would bind free variable in body", (new,))
+        msg = "new variable would bind free variable in body"
+        raise CollisionError(msg, (new,))
 
     def eta_reduction(self) -> Term[V]:
         """
@@ -295,7 +299,8 @@ class Abstraction(Term[V]):
             case Application(f, Variable(x)) if x == self.bound and x not in f.free_variables():
                 return f
             case _:
-                raise ValueError("abstraction is not useless")
+                msg = "abstraction is not useless"
+                raise ValueError(msg)
 
     def accept(self, visitor: visitors.Visitor[T, V]) -> T:
         """
@@ -351,7 +356,8 @@ class Application(Term[V]):
                     term = cls(term, argument)
                 return term
             case _:
-                raise ValueError("no arguments to apply abstraction to")
+                msg = "no arguments to apply abstraction to"
+                raise ValueError(msg)
 
     def __str__(self) -> str:
         """
@@ -406,7 +412,8 @@ class Application(Term[V]):
             case Abstraction(bound, body):
                 return body.substitute(bound, self.argument)
             case _:
-                raise ValueError("can not perform reduction without known Abstraction")
+                msg = "can not perform reduction without known Abstraction"
+                raise ValueError(msg)
 
     def accept(self, visitor: visitors.Visitor[T, V]) -> T:
         """

@@ -41,7 +41,7 @@ class RenamingSubstitution(DeferrableSubstitution[V]):
         :param abstraction: abstraction term which could bind free variables
         :return: abstraction term which does not bind free variables
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @final
     def trace(self) -> TracingDecorator[V]:

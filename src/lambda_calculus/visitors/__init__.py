@@ -53,7 +53,7 @@ class Visitor(ABC, Generic[T, V]):
         :param variable: variable term to visit
         :return: value as required by its type variable
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abstractmethod
     def visit_abstraction(self, abstraction: terms.Abstraction[V]) -> T:
@@ -65,7 +65,7 @@ class Visitor(ABC, Generic[T, V]):
         :param abstraction: abstraction term to visit
         :return: value as required by its type variable
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abstractmethod
     def visit_application(self, application: terms.Application[V]) -> T:
@@ -77,7 +77,7 @@ class Visitor(ABC, Generic[T, V]):
         :param appliation: application term to visit
         :return: value as required by its type variable
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 class BottomUpVisitor(Visitor[T, V]):
@@ -130,7 +130,7 @@ class BottomUpVisitor(Visitor[T, V]):
         :param body: value produced by visiting its body
         :return: value as required by its type variable
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abstractmethod
     def ascend_application(self, application: terms.Application[V], abstraction: T, argument: T) -> T:
@@ -142,7 +142,7 @@ class BottomUpVisitor(Visitor[T, V]):
         :param argument: value produced by visiting its argument
         :return: value as required by its type variable
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 class DeferrableVisitor(Visitor[T, V]):
@@ -161,7 +161,7 @@ class DeferrableVisitor(Visitor[T, V]):
         :return: tuple containing a value as required by its type variable
                  and a visitor to be used for visiting its body
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abstractmethod
     def defer_application(self, application: terms.Application[V]) -> tuple[T, DeferrableVisitor[T, V] | None, DeferrableVisitor[T, V] | None]:
@@ -172,4 +172,4 @@ class DeferrableVisitor(Visitor[T, V]):
         :return: tuple containing a value as required by its type variable
                  and visitors to be used for visiting its abstraction and argument
         """
-        raise NotImplementedError()
+        raise NotImplementedError

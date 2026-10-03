@@ -99,7 +99,8 @@ class CheckedSubstitution(Substitution[V]):
             return variable
         collisions = self.free_variables & self.bound_variables.keys()
         if collisions:
-            raise CollisionError("free variables in value are bound in term", collisions)
+            msg = "free variables in value are bound in term"
+            raise CollisionError(msg, collisions)
         return self.value
 
     def visit_abstraction(self, abstraction: terms.Abstraction[V]) -> terms.Abstraction[V]:

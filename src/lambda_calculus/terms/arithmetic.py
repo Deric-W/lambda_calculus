@@ -123,7 +123,8 @@ def number(n: int) -> Abstraction[str]:
     :return: requested term
     """
     if n < 0:
-        raise ValueError("number is not natural")
+        msg = "number is not natural"
+        raise ValueError(msg)
     f = Variable("f")
     body: Term[str] = Variable("x")
     for _ in range(n):

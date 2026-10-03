@@ -35,7 +35,7 @@ class Substitution(Visitor["terms.Term[V]", V]):
         :param abstraction: abstraction term to visit
         :return: new term with substitutions performed
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abstractmethod
     def visit_application(self, application: terms.Application[V]) -> terms.Application[V]:
@@ -47,7 +47,7 @@ class Substitution(Visitor["terms.Term[V]", V]):
         :param appliation: application term to visit
         :return: new term with substitutions performed
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @classmethod
     @abstractmethod
@@ -59,7 +59,7 @@ class Substitution(Visitor["terms.Term[V]", V]):
         :param value: value which should be substituted
         :return: new instance
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 class DeferrableSubstitution(DeferrableVisitor["terms.Term[V]", V], Substitution[V]):
@@ -78,7 +78,7 @@ class DeferrableSubstitution(DeferrableVisitor["terms.Term[V]", V], Substitution
         :return: tuple containing a new term instance with substitutions performed
                  and a visitor to be used for visiting its body
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abstractmethod
     def defer_application(self, application: terms.Application[V]) -> tuple[terms.Application[V], DeferrableSubstitution[V] | None, DeferrableSubstitution[V] | None]:
@@ -89,7 +89,7 @@ class DeferrableSubstitution(DeferrableVisitor["terms.Term[V]", V], Substitution
         :return: tuple containing a new term instance with substitutions performed
                  and visitors to be used for visiting its abstraction and argument
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @final
     def visit_abstraction(self, abstraction: terms.Abstraction[V]) -> terms.Abstraction[V]:
