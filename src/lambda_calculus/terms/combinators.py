@@ -31,7 +31,7 @@ K: Final = Variable("x").abstract("x", "y")
 K combinator of the SKI combinator calculus.
 """
 
-I: Final = Variable("x").abstract("x")
+I: Final = Variable("x").abstract("x")  # noqa: E741
 """
 I combinator of the SKI combinator calculus.
 """
