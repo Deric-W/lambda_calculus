@@ -33,11 +33,8 @@ jobs:
     - name: Perform type checks
       run: hatch check types
 
-    - name: Run tests
-      run: hatch test --all --cover-quiet --verbose
-
-    - name: Generate report
-      run: hatch env run -e hatch-test.py3.13 coverage xml
+    - name: Run tests and generate coverage report
+      run: hatch test --all --cover-quiet --cover-xml --verbose
 
     - name: Upload coverage
       uses: codecov/codecov-action@v7
