@@ -1,0 +1,74 @@
+name: Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build-assets:
+    name: Build release assets
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.14'
+          cache: pip
+
+      - name: Install Hatch
+        run: python -m pip install "hatch ~= 1.17.0"
+
+      - name: Build sdist and wheel
+        run: |
+          rm -rf ./dist
+          hatch build --clean -t sdist -t wheel ./dist
+
+      - name: Upload release assets
+        shell: python
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          import subprocess
+          import sys
+          from pathlib import Path
+
+          cmd = ["gh", "release", "upload", "${{ github.event.release.tag_name }}"]
+          cmd.extend(path for path in Path("./dist").iterdir() if path.info.is_file(follow_symlinks=False))
+          sys.exit(subprocess.run(cmd, check=False, shell=False).returncode)
+
+      - name: Upload release asset artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-assets
+          path: ./dist/
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0    # already compressed
+
+  pypi-publish:
+    name: Publish assets to PyPI
+    if: success() && ! github.event.release.draft
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    environment:
+      name: pypi
+      url: https://pypi.org/project/lambda-calculus/
+    needs:
+      - build-assets
+
+    steps:
+      - name: Download release asset artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-assets
+          path: ./dist/
+
+      - name: Publish release to PyPI
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33
