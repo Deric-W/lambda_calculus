@@ -2,7 +2,7 @@ name: Release
 
 on:
   release:
-    types: [created]
+    types: [published]
 
 jobs:
   build-assets:
@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: release-assets
-          path: ./dist/
+          path: dist/
           if-no-files-found: error
           retention-days: 1
           compression-level: 0    # already compressed
@@ -68,7 +68,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: release-assets
-          path: ./dist/
+          path: dist/
 
       - name: Publish release to PyPI
         uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33
