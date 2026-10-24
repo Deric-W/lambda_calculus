@@ -3,14 +3,13 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import TypeVar, final
+from typing import Self, TypeVar, final
 
 from ... import terms
 from .. import DeferrableVisitor, Visitor
 
 __all__ = ("DeferrableSubstitution", "Substitution", "checked", "unsafe")
 
-T = TypeVar("T")
 V = TypeVar("V")
 
 
@@ -51,7 +50,7 @@ class Substitution(Visitor["terms.Term[V]", V]):
 
     @classmethod
     @abstractmethod
-    def from_substitution(cls: type[T], variable: V, value: terms.Term[V]) -> T:
+    def from_substitution(cls, variable: V, value: terms.Term[V]) -> Self:
         """
         Create an instance from the substitution it should perform
 

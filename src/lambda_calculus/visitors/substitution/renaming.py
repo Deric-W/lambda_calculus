@@ -6,7 +6,7 @@ from abc import abstractmethod
 from collections.abc import Generator
 from collections.abc import Set as AbstractSet
 from itertools import count
-from typing import TypeVar, final
+from typing import Self, TypeVar, final
 
 from ... import terms
 from .. import Visitor
@@ -189,7 +189,7 @@ class CountingSubstitution(RenamingSubstitution[str]):
         self.free_variables = free_variables
 
     @classmethod
-    def from_substitution(cls, variable: str, value: terms.Term[str]) -> CountingSubstitution:
+    def from_substitution(cls, variable: str, value: terms.Term[str]) -> Self:
         """
         Create an instance from the substitution it should perform
 

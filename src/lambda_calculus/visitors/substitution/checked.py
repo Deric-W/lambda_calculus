@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Set as AbstractSet
-from typing import TypeVar, final
+from typing import Self, TypeVar, final
 
 from ... import terms
 from ...errors import CollisionError
@@ -43,7 +43,7 @@ class CheckedSubstitution(Substitution[V]):
         self.bound_variables = {}
 
     @classmethod
-    def from_substitution(cls, variable: V, value: terms.Term[V]) -> CheckedSubstitution[V]:
+    def from_substitution(cls, variable: V, value: terms.Term[V]) -> Self:
         """
         Create an instance from the substitution it should perform
 

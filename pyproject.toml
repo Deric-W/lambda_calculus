@@ -2,7 +2,7 @@
 name = "lambda_calculus"
 version = "3.1.0"
 description = "Implementation of the Lambda calculus"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 keywords = []
 classifiers = [
     "Intended Audience :: Education",
@@ -38,7 +38,7 @@ installer = "pip"
 installer = "pip"
 
 [[tool.hatch.envs.hatch-test.matrix]]
-python = ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
+python = ["3.11", "3.12", "3.13", "3.14", "3.15"]
 
 [tool.hatch.envs.hatch-check-fmt]
 installer = "pip"
