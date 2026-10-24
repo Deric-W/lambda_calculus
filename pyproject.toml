@@ -1,6 +1,5 @@
 [project]
 name = "lambda_calculus"
-version = "3.1.0"
 description = "Implementation of the Lambda calculus"
 requires-python = ">=3.11"
 keywords = []
@@ -13,6 +12,7 @@ classifiers = [
     "Topic :: Utilities",
     "Typing :: Typed"
 ]
+dynamic = ["version"]
 
 [project.readme]
 file = "README.md"
@@ -28,8 +28,14 @@ Documentation = "http://lambda-calculus.readthedocs.io/"
 Bugtracker = "https://github.com/Deric-W/lambda_calculus/issues"
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/lambda_calculus/_version.py"
 
 [tool.hatch.envs.default]
 installer = "pip"
