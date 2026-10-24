@@ -6,7 +6,7 @@ from abc import abstractmethod
 from collections.abc import Iterable, Iterator, Sequence
 from collections.abc import Set as AbstractSet
 from dataclasses import dataclass
-from typing import TypeVar, final
+from typing import Self, TypeVar, final
 
 from ..errors import CollisionError
 from ..visitors import Visitor, walking
@@ -141,7 +141,7 @@ class Variable(Term[V]):
     name: V
 
     @classmethod
-    def with_valid_name(cls, name: V) -> Variable[V]:
+    def with_valid_name(cls, name: V) -> Self:
         """
         Create an instance with a valid name.
 
@@ -216,7 +216,7 @@ class Abstraction(Term[V]):
     body: Term[V]
 
     @classmethod
-    def curried(cls, variables: Sequence[V], body: Term[V]) -> Abstraction[V]:
+    def curried(cls, variables: Sequence[V], body: Term[V]) -> Self:
         """
         Create an Abstraction binding multiple variables.
 
@@ -333,7 +333,7 @@ class Application(Term[V]):
     argument: Term[V]
 
     @classmethod
-    def with_arguments(cls, abstraction: Term[V], arguments: Sequence[Term[V]]) -> Application[V]:
+    def with_arguments(cls, abstraction: Term[V], arguments: Sequence[Term[V]]) -> Self:
         """
         Create an Application applying the abstraction to multiple arguments.
 

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TypeVar, final
+from typing import Self, TypeVar, final
 
 from ... import terms
 from . import DeferrableSubstitution
@@ -32,7 +32,7 @@ class UnsafeSubstitution(DeferrableSubstitution[V]):
         self.value = value
 
     @classmethod
-    def from_substitution(cls, variable: V, value: terms.Term[V]) -> UnsafeSubstitution[V]:
+    def from_substitution(cls, variable: V, value: terms.Term[V]) -> Self:
         """
         Create an instance from the substitution it should perform
 
