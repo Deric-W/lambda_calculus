@@ -25,7 +25,7 @@ Furthermore, it expects all terms to be finite, which means the absence of cycle
 
 ## Requirements
 
-Python >= 3.10 is required to use this package.
+Python >= 3.11 is required to use this package.
 
 ## Installation
 
